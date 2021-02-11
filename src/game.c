@@ -3,6 +3,7 @@
 #include "gf2d_sprite.h"
 #include "simple_logger.h"
 #include "entity.h"
+#include "player.h"
 
 int main(int argc, char * argv[])
 {
@@ -10,7 +11,8 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
-    Entity *player;
+    Entity *player1;
+    Entity *player2;
     
     int mx,my;
     float mf = 0;
@@ -37,7 +39,8 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     mouse->actionSpec = vector3d(0,0,16);
-    player = spawnPlayer();
+    player1 = spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 0);
+    player2 = spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 1);
     /*main game loop*/
     while(!done)
     {
@@ -69,9 +72,21 @@ int main(int argc, char * argv[])
                 &mouseColor,
                 (int)mf);
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
+
+        //Vector3D *rot = vector3d_new();
+        //rot->x = 23;
+        //rot->y = 35;
+        //Vector2D angle = vector2d(0,0);
+        //angle.x = mx - player1->position.x;
+        //angle.y = my - player1->position.y;
+        //rot->z = vector_angle(angle.x,angle.y);
+        //player1->rotation = rot;
+
+        ent_face_eo(player1,player2);
         
+        //slog("rotation: %f", rot->z);
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
-        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
+        //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
     return 0;
