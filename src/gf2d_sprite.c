@@ -250,12 +250,12 @@ void gf2d_sprite_draw(
             sprite->texture,
             colorShift->w);
     }
-    
+    sprite->frames_per_line = sprite->actionSpec.z;
     fpl = (sprite->frames_per_line)?sprite->frames_per_line:1;
     gfc_rect_set(
         cell,
-        frame%fpl * sprite->frame_w,
-        frame/fpl * sprite->frame_h,
+        sprite->actionSpec.x + frame%fpl * sprite->frame_w,                                //first frame offset
+        sprite->actionSpec.y + frame/fpl * sprite->frame_h,                                //(60 * 5 + 13)
         sprite->frame_w,
         sprite->frame_h);
     gfc_rect_set(

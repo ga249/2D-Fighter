@@ -13,6 +13,7 @@ typedef struct Sprite_S
     SDL_Texture *texture;
     Uint32 frames_per_line;
     Uint32 frame_w,frame_h;
+    Vector3D actionSpec;            /**<defines offset for specifc location and fpl in spriteSheet based on action>*/
 }Sprite;
 
 /**
