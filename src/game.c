@@ -60,6 +60,9 @@ int main(int argc, char * argv[])
 
             //drawing entitys
             entity_draw_all();
+
+            gf2d_draw_rect(player1->hitBox, mouseColor);
+            gf2d_draw_rect(player2->hitBox, mouseColor);
             
             //UI elements last
             gf2d_sprite_draw(
