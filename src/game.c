@@ -54,8 +54,13 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
-        entity_update_all();
         level_update(lvl);
+
+        if (!lvl->paused)
+        {
+            entity_update_all();
+        }
+        
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
@@ -63,7 +68,11 @@ int main(int argc, char * argv[])
             level_draw(lvl);
 
             //drawing entitys
-            entity_draw_all();
+            if (!lvl->paused)
+            {
+                entity_draw_all();
+            }
+            
 
             gf2d_draw_rect(player1->hitBox, mouseColor);
             gf2d_draw_rect(player2->hitBox, mouseColor);
