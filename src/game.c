@@ -15,7 +15,11 @@ int main(int argc, char * argv[])
     Entity *player1;
     Entity *player2;
     Level *lvl;
-    
+    SDL_Rect p1Health;
+    SDL_Rect p2Health;
+    SDL_Rect p1Ki;
+    SDL_Rect p2Ki;
+
     int mx,my;
     float mf = 0;
     Sprite *mouse;
@@ -44,6 +48,7 @@ int main(int argc, char * argv[])
     lvl = level_new(bg);
     player1 = spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 0);
     player2 = spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
+    gfc_rect_set(p1Health, 10, 10, 500, 20);
     /*main game loop*/
     while(!done)
     {
@@ -53,6 +58,7 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
+        p1Health.w = player1->health;
 
         level_update(lvl);
 
@@ -78,6 +84,8 @@ int main(int argc, char * argv[])
             gf2d_draw_rect(player2->hitBox, mouseColor);
             
             //UI elements last
+            gf2d_draw_rect(p1Health, mouseColor);
+
             gf2d_sprite_draw(
                 mouse,
                 vector2d(mx,my),
