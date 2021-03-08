@@ -77,7 +77,7 @@ int main(int argc, char * argv[])
                 NULL,
                 &mouseColor,
                 (int)mf);
-                
+
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
 
         ent_face_eo(player1,player2);
@@ -87,6 +87,8 @@ int main(int argc, char * argv[])
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
+    level_free(lvl);
+    slog("level freed");
     return 0;
 }
 /*eol@eof*/
