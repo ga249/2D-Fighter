@@ -4,15 +4,17 @@
 #include "simple_logger.h"
 #include "entity.h"
 #include "player.h"
+#include "level.h"
 
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
     const Uint8 * keys;
-    Sprite *sprite;
+    Sprite *bg;
     Entity *player1;
     Entity *player2;
+    Level *lvl;
     
     int mx,my;
     float mf = 0;
@@ -36,11 +38,12 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
-    sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+    bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     mouse->actionSpec = vector3d(0,0,16);
+    lvl = level_new(bg);
     player1 = spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 0);
-    player2 = spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 1);
+    player2 = spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
     /*main game loop*/
     while(!done)
     {
@@ -56,7 +59,7 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-            gf2d_sprite_draw_image(sprite,vector2d(0,0));
+            level_draw(lvl);
 
             //drawing entitys
             entity_draw_all();
@@ -74,16 +77,8 @@ int main(int argc, char * argv[])
                 NULL,
                 &mouseColor,
                 (int)mf);
+                
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
-
-        //Vector3D *rot = vector3d_new();
-        //rot->x = 23;
-        //rot->y = 35;
-        //Vector2D angle = vector2d(0,0);
-        //angle.x = mx - player1->position.x;
-        //angle.y = my - player1->position.y;
-        //rot->z = vector_angle(angle.x,angle.y);
-        //player1->rotation = rot;
 
         ent_face_eo(player1,player2);
         
