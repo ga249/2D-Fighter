@@ -55,6 +55,7 @@ int main(int argc, char * argv[])
         if (mf >= 16.0)mf = 0;
 
         entity_update_all();
+        level_update(lvl);
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
