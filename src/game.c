@@ -46,8 +46,8 @@ int main(int argc, char * argv[])
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     mouse->actionSpec = vector3d(0,0,16);
     lvl = level_new(bg);
-    player2 = spawnPlayer(vector2d(400,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 1);
-    player1 = spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 0);
+    player1 = spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 0);
+    player2 = spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
     gfc_rect_set(p1Health, 10, 10, 500, 20);
     gfc_rect_set(p2Health, lvl->bounds.w - 510, 10, 500, 20);
     gfc_rect_set(p1Ki, 10, 35, 500, 20);
@@ -88,6 +88,8 @@ int main(int argc, char * argv[])
             if (!lvl->paused)
             {
                 entity_draw_all();
+            }else{
+                
             }
             
 

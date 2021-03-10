@@ -46,9 +46,9 @@ void player1Think(Entity *self)
 
         if (self->flip->y)
         {
-            self->frame = 2;
-        }else{
             self->frame = 1;
+        }else{
+            self->frame = 2;
         }
         
     }
@@ -58,18 +58,23 @@ void player1Think(Entity *self)
         
         if (self->flip->y)
         {
-            self->frame = 1;
-        }else{
             self->frame = 2;
+        }else{
+            self->frame = 1;
         }
     }
     //----------------------------------------------
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A)||keys[SDL_SCANCODE_J])
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))
     {
-        self->frame = 17;
+        self->sprite->actionSpec = vector3d(5,(65 * 30 - 30),4);    //stick out hand
+        self->frame = 3;
         self->health -= .5;
-        slog("c2 pressing A");
+        //slog("c1 pressing A");
+    }else
+    {
+        self->sprite->actionSpec = vector3d(5,(60 * 5 + 13),5);
+        //slog("blah");
     }
 
 
@@ -115,9 +120,9 @@ void player2Think(Entity *self)
 
         if (self->flip->y)
         {
-            self->frame = 1;
-        }else{
             self->frame = 2;
+        }else{
+            self->frame = 1;
         }
         
     }
@@ -127,23 +132,18 @@ void player2Think(Entity *self)
         
         if (self->flip->y)
         {
-            self->frame = 2;
-        }else{
             self->frame = 1;
+        }else{
+            self->frame = 2;
         }
     }
     //--------------------------------------------
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A)||keys[SDL_SCANCODE_J])
     {
-        self->sprite->actionSpec = vector3d(5,(65 * 30 - 30),4);    //stick out hand
-        self->frame = 3;
+        self->frame = 17;
         self->health -= .5;
-        //slog("c1 pressing A");
-    }else
-    {
-        self->sprite->actionSpec = vector3d(5,(60 * 5 + 13),5);
-        //slog("blah");
+        slog("c2 pressing A");
     }
 
 }
