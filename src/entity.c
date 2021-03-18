@@ -2,6 +2,7 @@
 #include "simple_logger.h"
 #include "entity.h"
 #include "gf2d_draw.h"
+#include "damage.h"
 
 const Uint8 * keys;
 static EntityManager entity_manager = {0};
@@ -97,6 +98,7 @@ void entity_update(Entity *self)
     //
     //if (self->frame > 5)self->frame = 0;
     if (self->think)self->think(self);
+    //damage_collision_check();
 }
 
 void entity_update_all()
@@ -172,6 +174,40 @@ void ent_face_eo(Entity *ent1, Entity *ent2)
         //self->flip->x = 0;
         ent2->flip->y = 0;
     }
+}
+
+Entity *get_player_1()
+{
+    Entity *p1;
+    int i;
+    for (i = 0; i < entity_manager.maxEnts; i++)
+    {
+        if ((entity_manager.entityList[i].p = 1) & (entity_manager.entityList[i]._inuse))
+        {
+            slog("p1 found");
+            p1 = &entity_manager.entityList[i];
+            return p1;
+        }
+    }
+    slog("No player 1 found");
+    return NULL;
+}
+
+Entity *get_player_2()
+{
+    Entity *p2;
+    int i;
+    for (i = 0; i < entity_manager.maxEnts; i++)
+    {
+        if ((entity_manager.entityList[i].p = 2) & (entity_manager.entityList[i]._inuse))
+        {
+            slog("p2 found");
+            p2 = &entity_manager.entityList[i];
+            return p2;
+        }
+    }
+    slog("No player 2 found");
+    return NULL;
 }
 
 //Entity *doneEnt()

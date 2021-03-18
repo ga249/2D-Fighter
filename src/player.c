@@ -65,11 +65,13 @@ void player1Think(Entity *self)
     }
     //----------------------------------------------
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))
+    self->flag = IDLE;
+
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X))
     {
         self->sprite->actionSpec = vector3d(5,(65 * 30 - 30),4);    //stick out hand
         self->frame = 3;
-        self->health -= .5;
+        self->flag = ATK_LIGHT;
         //slog("c1 pressing A");
     }else
     {
@@ -95,8 +97,12 @@ void player2Think(Entity *self)
     self->hitBox.x = self->position.x;
     self->hitBox.y = self->position.y;
 
-    self->frame = 0;
-
+    if (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X))
+    {
+        self->flag = IDLE;
+    }
+    if (self->flag == IDLE)self->frame = 0;
+    
     //Set dash speed if L2 is pressed
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_LEFTSHOULDER))
     {
@@ -139,10 +145,21 @@ void player2Think(Entity *self)
     }
     //--------------------------------------------
 
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X))
+    {
+        self->flag = ATK_LIGHT;
+        self->frame += .05;
+        slog("%f",self->frame);
+        if ((self->frame > 16) || (self->frame < 11))
+        {
+            self->frame = 11;
+        }
+        //self->frame += .1;
+    }
+
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A)||keys[SDL_SCANCODE_J])
     {
         self->frame = 17;
-        self->health -= .5;
         slog("c2 pressing A");
     }
 
@@ -180,9 +197,11 @@ Entity *spawnPlayer(Vector2D initPos, Sprite *sprite, int isPlayer2)
     if (isPlayer2)
     {
         self->think = player2Think;
+        self->p = 2;
         self->controller = SDL_GameControllerOpen(1);
     }else{
         self->think = player1Think;
+        self->p = 1;
         self->controller = SDL_GameControllerOpen(0);
     }
     return self;

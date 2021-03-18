@@ -5,11 +5,13 @@
 #include "entity.h"
 #include "player.h"
 #include "level.h"
+#include "damage.h"
 
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
+    float atkBuffer;
     const Uint8 * keys;
     Sprite *bg;
     Entity *player1;
@@ -72,12 +74,33 @@ int main(int argc, char * argv[])
 
 
         level_update(lvl);
-
+        
         if (!lvl->paused)
         {
             entity_update_all();
         }
         
+        //DAMANGE_COLLISION_CHECK--------------------------------------------------
+        if (collide_ent(player1,player2))
+        {
+            if ((player1->flag == ATK_LIGHT) || (player1->flag == ATK_HEAVY))
+            {
+                if (SDL_GetTicks() - atkBuffer >= 200)
+                {
+                    atkBuffer = SDL_GetTicks();
+                    damage_deal(player1,player2);
+                }
+            }
+            if ((player2->flag == ATK_LIGHT) || (player2->flag == ATK_HEAVY))
+            {
+                if (SDL_GetTicks() - atkBuffer >= 200)
+                {
+                    atkBuffer = SDL_GetTicks();
+                    damage_deal(player2,player1);
+                }
+            }
+        }
+        //---------------------------------------------------------------------------
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
@@ -89,7 +112,7 @@ int main(int argc, char * argv[])
             {
                 entity_draw_all();
             }else{
-                
+                //TODO: draw menus
             }
             
 

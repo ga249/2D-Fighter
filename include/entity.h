@@ -3,12 +3,14 @@
 
 #include "gf2d_sprite.h"
 #include "gf2d_draw.h"
+#include "gfc_list.h"
 
 #define ENT_PLAYER      0
 #define ATK_LIGHT       1
 #define ATK_HEAVY       2
 #define DAMAGED         3
-#define IDLE            4
+#define BLOCKING        4
+#define IDLE            5
 
 
 typedef struct Entity_S
@@ -31,6 +33,8 @@ typedef struct Entity_S
 
     Vector2D     position;      /**<where the entity is in 2D space>*/
     Vector3D     *rotation;      /**<rotation of entity (mainly for player)>*/
+
+    int         p;              /**<int to identify player 1 and 2>*/
 
     SDL_GameController *controller; /**<pointer to SDL_GameController (used for players)*/
     void         *typeOfEnt;    /**<void pointer to be set to what type of entity I want>*/
@@ -90,6 +94,19 @@ void entity_draw_all();
  * @param ent2 entity 2
  */
 void ent_face_eo(Entity *ent1, Entity *ent2);
+
+/**
+ * @brief get a pointer player 1
+ * @return pointer to player 1
+ */
+Entity *get_player_1();
+
+/**
+ * @brief get a pointer player 2
+ * @return pointer to player 2
+ */
+Entity *get_player_2();
+
 
 //Entity *doneEnt();
 //
