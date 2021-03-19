@@ -17,7 +17,7 @@ void damage_deal(Entity *parent, Entity *victim)
     }
 }
 
-void damage_collision_check()
+void damage_collision_check()           //broken
 {
     Entity *p1 = get_player_1();
     Entity *p2 = get_player_2();
