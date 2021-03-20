@@ -21,9 +21,9 @@ void player1Think(Entity *self)
     self->hitBox.x = self->position.x;
     self->hitBox.y = self->position.y;
 
-    if ((self->flag == ATK_LIGHT) || (self->flag == ATK_HEAVY))
+    if (self->flag != IDLE)
     {
-        if(!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X))
+        if((self->flag != DAMAGED) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)))
         {
             self->flag = IDLE;
         }
@@ -72,11 +72,16 @@ void player1Think(Entity *self)
     }
     //----------------------------------------------
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X))
+    if (self->flag == DAMAGED)
+    {
+        self->frame = 20;
+    }
+
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X) & (self->flag != DAMAGED))
     {
         self->flag = ATK_LIGHT;
         self->frame += .075;
-        slog("%f",self->frame);
+        //slog("%f",self->frame);
         if ((self->frame > 15) || (self->frame < 11))
         {
             self->frame = 11;
@@ -84,11 +89,14 @@ void player1Think(Entity *self)
         //self->frame += .1;
     }
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)||keys[SDL_SCANCODE_J])
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)||keys[SDL_SCANCODE_J])
     {
-        
+        if (self->flag != DAMAGED)
+        {
+            self->flag = BLOCKING;
+            self->frame = 19;
+        }
     }
-
 
 }
 

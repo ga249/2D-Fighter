@@ -15,6 +15,10 @@ void damage_deal(Entity *parent, Entity *victim)
     {
         victim->health -= 10;
     }
+    if (victim->flag != BLOCKING)
+    {
+        victim->flag = DAMAGED;
+    }  
 }
 
 void damage_collision_check()           //broken

@@ -90,7 +90,7 @@ int main(int argc, char * argv[])
                     atkBuffer = SDL_GetTicks();
                     damage_deal(player1,player2);
                 }
-            }
+            }else
             if ((player2->flag == ATK_LIGHT) || (player2->flag == ATK_HEAVY))
             {
                 if (SDL_GetTicks() - atkBuffer >= 200)
@@ -98,6 +98,9 @@ int main(int argc, char * argv[])
                     atkBuffer = SDL_GetTicks();
                     damage_deal(player2,player1);
                 }
+            }else{
+                player1->flag = IDLE;
+                player2->flag = IDLE;
             }
         }
         //---------------------------------------------------------------------------
@@ -140,7 +143,7 @@ int main(int argc, char * argv[])
         ent_face_eo(player1,player2);
         
         //slog("rotation: %f", rot->z);
-        if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
+        if (keys[SDL_SCANCODE_ESCAPE] || SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START))done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
