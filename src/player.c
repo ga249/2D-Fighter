@@ -98,6 +98,19 @@ void player1Think(Entity *self)
         }
     }
 
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_DPAD_DOWN) & (self->flag != DAMAGED))
+    {
+        self->flag = CHARGING;
+        self->frame += .075;
+        if ((self->frame > 7) || (self->frame < 5))
+        {
+            self->frame = 5;
+        }else if(self->frame == 7)
+        {
+            self->frame = 7;
+        }
+    }
+
 }
 
 void player2Think(Entity *self)

@@ -11,6 +11,7 @@
 #define DAMAGED         3
 #define BLOCKING        4
 #define IDLE            5
+#define CHARGING        6
 
 
 typedef struct Entity_S
