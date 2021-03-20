@@ -18,6 +18,8 @@ void damage_deal(Entity *parent, Entity *victim)
     if (victim->flag != BLOCKING)
     {
         victim->flag = DAMAGED;
+    }else{
+        victim->ki -= 10;
     }  
 }
 
