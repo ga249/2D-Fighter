@@ -56,19 +56,19 @@ void player1Think(Entity *self)
         if (keys[SDL_SCANCODE_D] || lx > 600)
         {
             self->position.x += speed;      //move right
-    
+
             if (self->flip->y)
             {
                 self->frame = 1;
             }else{
                 self->frame = 2;
             }
-            
+
         }
         if (keys[SDL_SCANCODE_A] || lx < -600)
         {
             self->position.x -= speed;      //move left
-            
+
             if (self->flip->y)
             {
                 self->frame = 2;
@@ -127,65 +127,69 @@ void player2Think(Entity *self)
     self->hitBox.x = self->position.x;
     self->hitBox.y = self->position.y; //!(self->flag == ATK_LIGHT)
 
-    if ((self->flag == ATK_LIGHT) || (self->flag == ATK_HEAVY))
+    if (self->flag != IDLE)
     {
-        if(!keys[SDL_SCANCODE_L])
+        if((self->flag != DAMAGED) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)))
         {
             self->flag = IDLE;
         }
     }
-    //}else{
-    //    self->flag = IDLE;
-    //}
     if (self->flag == IDLE)self->frame = 0;
     
     //Set dash speed if X is pressed
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))
     {
         speed = SPEED_DASH;
+        self->ki -= 2;
     }
     //---------------------------------
     //----MOVEMENT----
-    if (keys[SDL_SCANCODE_UP] || ly < -600)
+    if (self->flag == DAMAGED)
     {
-        self->position.y -= speed;      //move up
-        self->frame = 4;
-    }
-    if (keys[SDL_SCANCODE_DOWN] || ly > 600)
+        self->frame = 23;
+    }else
     {
-        self->position.y += speed;      //move down
-        self->frame = 3;
-    }
-    if (keys[SDL_SCANCODE_RIGHT] || lx > 600)
-    {
-        self->position.x += speed;      //move right
-
-        if (self->flip->y)
+        if (keys[SDL_SCANCODE_UP] || ly < -600)
         {
-            self->frame = 2;
-        }else{
-            self->frame = 1;
+            self->position.y -= speed;      //move up
+            self->frame = 4;
         }
-        
-    }
-    if (keys[SDL_SCANCODE_LEFT] || lx < -600)
-    {
-        self->position.x -= speed;      //move left
-        
-        if (self->flip->y)
+        if (keys[SDL_SCANCODE_DOWN] || ly > 600)
         {
-            self->frame = 1;
-        }else{
-            self->frame = 2;
+            self->position.y += speed;      //move down
+            self->frame = 3;
+        }
+        if (keys[SDL_SCANCODE_RIGHT] || lx > 600)
+        {
+            self->position.x += speed;      //move right
+
+            if (self->flip->y)
+            {
+                self->frame = 2;
+            }else{
+                self->frame = 1;
+            }
+
+        }
+        if (keys[SDL_SCANCODE_LEFT] || lx < -600)
+        {
+            self->position.x -= speed;      //move left
+
+            if (self->flip->y)
+            {
+                self->frame = 1;
+            }else{
+                self->frame = 2;
+            }
         }
     }
     //--------------------------------------------
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)||keys[SDL_SCANCODE_L])
+    if ((SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)||keys[SDL_SCANCODE_L]) & (self->flag != DAMAGED))
     {
         self->flag = ATK_LIGHT;
         self->frame += .075;
-        slog("%f",self->frame);
+        //slog("%f",self->frame);
         if ((self->frame > 16) || (self->frame < 11))
         {
             self->frame = 11;
@@ -193,10 +197,20 @@ void player2Think(Entity *self)
         //self->frame += .1;
     }
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)||keys[SDL_SCANCODE_J])
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)||keys[SDL_SCANCODE_J])
     {
-        self->frame = 17;
-        slog("c2 pressing A");
+        if (self->flag != DAMAGED)
+        {
+            self->flag = BLOCKING;
+            self->frame = 22;
+        }
+    }
+
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_DPAD_DOWN) & (self->flag != DAMAGED))
+    {
+        self->flag = CHARGING;
+        self->frame = 7;
+        if (self->ki < 350)self->ki += 1;
     }
 
 }

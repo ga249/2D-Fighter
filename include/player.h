@@ -17,6 +17,7 @@ void player2Think(Entity *self);
  * @param initPos initial spawn position
  * @param sprite pointer to sprite for player
  * @param isPlayer2 "bool" to differentiate from player 1 and 2, 0 = p1 1 = p2
+ * @return pointer to a player entity
  */
 Entity *spawnPlayer(Vector2D initPos, Sprite *sprite, int isPlayer2);
 
