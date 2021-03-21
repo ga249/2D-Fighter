@@ -23,6 +23,7 @@ typedef struct Entity_S
     Vector2D    *scale;         /**<scaleOffset of sprite draw>*/
     Vector2D    *flip;          /**<(flip Horiz,flip Vert)>*/
     int         speed;          /**<Speed at which ent moves>*/
+    float       ttd;            /**<time till death(killing) of ent*/
 
 
     SDL_Rect    hitBox;         /**<rect used for collisions>*/

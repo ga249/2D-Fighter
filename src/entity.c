@@ -3,6 +3,7 @@
 #include "entity.h"
 #include "gf2d_draw.h"
 #include "damage.h"
+#include "gfc_vector.h"
 
 const Uint8 * keys;
 static EntityManager entity_manager = {0};
@@ -88,6 +89,10 @@ void entity_free(Entity *self)
     if (!self)return;
     gf2d_sprite_free(self->sprite);
     self->sprite = NULL;
+    self->hitBox.x = 0;
+    self->hitBox.y = 0;
+    self->hitBox.w = 0;
+    self->hitBox.h = 0;
     self->_inuse = 0;
 }
 

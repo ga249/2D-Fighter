@@ -110,6 +110,11 @@ void player1Think(Entity *self)
         if (self->ki < 350)self->ki += 1;
     }
 
+    if (keys[SDL_SCANCODE_Y])
+    {
+        spawn_projectile(self, "kiBlastSmall");
+    }
+
 }
 
 void player2Think(Entity *self)
@@ -129,7 +134,7 @@ void player2Think(Entity *self)
 
     if (self->flag != IDLE)
     {
-        if((self->flag != DAMAGED) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)))
+        if((self->flag != DAMAGED) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) & !keys[SDL_SCANCODE_L])
         {
             self->flag = IDLE;
         }
@@ -189,7 +194,7 @@ void player2Think(Entity *self)
     {
         self->flag = ATK_LIGHT;
         self->frame += .075;
-        //slog("%f",self->frame);
+        slog("%f",self->frame);
         if ((self->frame > 16) || (self->frame < 11))
         {
             self->frame = 11;
