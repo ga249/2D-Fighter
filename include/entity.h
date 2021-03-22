@@ -12,6 +12,7 @@
 #define BLOCKING        4
 #define IDLE            5
 #define CHARGING        6
+#define ENT_PROJ        7
 
 
 typedef struct Entity_S
@@ -25,8 +26,9 @@ typedef struct Entity_S
     int         speed;          /**<Speed at which ent moves>*/
     float       ttd;            /**<time till death(killing) of ent*/
 
-
+    int         hbType;         /**<defines whether to use rect or circle hb>*/
     SDL_Rect    hitBox;         /**<rect used for collisions>*/
+    Vector3D    hitCircle;      /**<x,y,z to define circle used for collisions. z = radius>*/
     int         tag;            /**<type of entity:player - 0>*/
     int         flag;           /**<flag used for if players are attacking to trigger damage>*/
 
@@ -34,7 +36,8 @@ typedef struct Entity_S
     int         ki;
 
     Vector2D     position;      /**<where the entity is in 2D space>*/
-    Vector3D     *rotation;      /**<rotation of entity (mainly for player)>*/
+    Vector3D     *rotation;     /**<rotation of entity (mainly for player)>*/
+    Vector2D     *unitDirection;/**<2d vector that dictates direction*/  
 
     int         p;              /**<int to identify player 1 and 2>*/
 

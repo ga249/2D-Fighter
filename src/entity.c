@@ -149,13 +149,19 @@ void ent_face_eo(Entity *ent1, Entity *ent2)
     Vector3D *rot = vector3d_new();
     rot->x = 23;
     rot->y = 35;
-    Vector2D angle = vector2d(0,0);
-    angle.x = ent2->position.x - ent1->position.x;
-    angle.y = ent2->position.y - ent1->position.y;
-    rot->z = vector_angle(angle.x,angle.y);
+    Vector2D *angle = vector2d_new();
+    angle->x = ent2->position.x - ent1->position.x;
+    angle->y = ent2->position.y - ent1->position.y;
+    
+    rot->z = vector_angle(angle->x,angle->y);
     rot->z += 180;
     ent1->rotation->z = rot->z;
     ent2->rotation->z = rot->z;
+
+    vector2d_normalize(angle);
+    ent1->unitDirection = angle;
+    
+    slog("x: %f | y: %f", angle->x, angle->y);
 
     ent1->rotation->x = 23;           //
     ent1->rotation->y = 35;           //sets offset for ents rot

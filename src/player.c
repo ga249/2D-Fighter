@@ -5,6 +5,8 @@
 #include "gf2d_draw.h"
 
 const Uint8 * keys;
+float projBuffer;
+
 
 void player1Think(Entity *self)
 {
@@ -112,7 +114,12 @@ void player1Think(Entity *self)
 
     if (keys[SDL_SCANCODE_Y])
     {
-        spawn_projectile(self, "kiBlastSmall");
+        if (SDL_GetTicks() - projBuffer >= 300)
+        {
+            projBuffer = SDL_GetTicks();
+            spawn_projectile(self, "kiBlastSmall");
+        }
+        
     }
 
 }

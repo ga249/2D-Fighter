@@ -117,7 +117,7 @@ int main(int argc, char * argv[])
             }else{
                 //TODO: draw menus
             }
-            
+            //gf2d_draw_circle()
 
             gf2d_draw_rect(player1->hitBox, mouseColor);
             gf2d_draw_rect(player2->hitBox, mouseColor);
