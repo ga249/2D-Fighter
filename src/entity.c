@@ -161,10 +161,10 @@ void ent_face_eo(Entity *ent1, Entity *ent2)
     vector2d_normalize(angle);
     ent1->unitDirection = angle;
     
-    slog("x: %f | y: %f", angle->x, angle->y);
+    //slog("x: %f | y: %f", angle->x, angle->y);
 
     ent1->rotation->x = 23;           //
-    ent1->rotation->y = 35;           //sets offset for ents rot
+    ent1->rotation->y = 30;           //sets offset for ents rot
     ent2->rotation->x = 23;           //
     ent2->rotation->y = 50;           //
 

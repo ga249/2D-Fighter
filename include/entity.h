@@ -4,6 +4,7 @@
 #include "gf2d_sprite.h"
 #include "gf2d_draw.h"
 #include "gfc_list.h"
+#include "gf2d_shape.h"
 
 #define ENT_PLAYER      0
 #define ATK_LIGHT       1
@@ -13,6 +14,9 @@
 #define IDLE            5
 #define CHARGING        6
 #define ENT_PROJ        7
+#define HB_RECT         8
+#define HB_CIRCLE       9
+
 
 
 typedef struct Entity_S
@@ -28,7 +32,7 @@ typedef struct Entity_S
 
     int         hbType;         /**<defines whether to use rect or circle hb>*/
     SDL_Rect    hitBox;         /**<rect used for collisions>*/
-    Vector3D    hitCircle;      /**<x,y,z to define circle used for collisions. z = radius>*/
+    Circle      hitCircle;      /**<circle used for collisions>*/
     int         tag;            /**<type of entity:player - 0>*/
     int         flag;           /**<flag used for if players are attacking to trigger damage>*/
 

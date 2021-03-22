@@ -117,10 +117,12 @@ int main(int argc, char * argv[])
             }else{
                 //TODO: draw menus
             }
-            //gf2d_draw_circle()
+            
+            gf2d_draw_circle(vector2d(player1->hitCircle.x,player1->hitCircle.y),player1->hitCircle.r, mouseColor);
+            gf2d_draw_circle(vector2d(player2->hitCircle.x,player2->hitCircle.y),player2->hitCircle.r, mouseColor);
 
-            gf2d_draw_rect(player1->hitBox, mouseColor);
-            gf2d_draw_rect(player2->hitBox, mouseColor);
+            //gf2d_draw_rect(player1->hitBox, mouseColor);
+            //gf2d_draw_rect(player2->hitBox, mouseColor);
             
             //UI elements last
             gf2d_draw_rect(p1Health, v4d_red);

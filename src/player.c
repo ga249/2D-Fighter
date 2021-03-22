@@ -3,6 +3,7 @@
 #include "entity.h"
 #include "player.h"
 #include "gf2d_draw.h"
+#include "level.h"
 
 const Uint8 * keys;
 float projBuffer;
@@ -22,6 +23,9 @@ void player1Think(Entity *self)
     //update hitboxes
     self->hitBox.x = self->position.x;
     self->hitBox.y = self->position.y;
+
+    self->hitCircle.x = self->position.x;// + 10;
+    self->hitCircle.y = self->position.y;// + 35;
 
     if (self->flag != IDLE)
     {
@@ -137,7 +141,10 @@ void player2Think(Entity *self)
     
     //update hitboxes
     self->hitBox.x = self->position.x;
-    self->hitBox.y = self->position.y; //!(self->flag == ATK_LIGHT)
+    self->hitBox.y = self->position.y;
+
+    self->hitCircle.x = self->position.x;// + 10;
+    self->hitCircle.y = self->position.y;// + 35;
 
     if (self->flag != IDLE)
     {
@@ -249,12 +256,16 @@ Entity *spawnPlayer(Vector2D initPos, Sprite *sprite, int isPlayer2)
     self->scale = vector2d_new();
     self->scale->x = 1.5;
     self->scale->y = 1.5;
+
     SDL_Rect hb;            //hitbox
     hb.x = 100;
     hb.y = 100;
     hb.h = 65 * 1.5;
     hb.w = 48 * 1.5;
     self->hitBox = hb;
+    Circle hc = gf2d_circle(self->position.x + 23,self->position.y + 35, 30);
+    self->hitCircle = hc;
+
     if (isPlayer2)
     {
         self->think = player2Think;

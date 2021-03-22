@@ -32,10 +32,32 @@ int collide_menu(SDL_Rect r1, Vector2D m){
 
 int collide_ent(Entity *e1, Entity *e2)
 {
-    if (collide_rect(e1->hitBox, e2->hitBox))
+    if ((e1->hbType == HB_RECT) & (e2->hbType == HB_RECT))
     {
-        return 1;
+      if (collide_rect(e1->hitBox, e2->hitBox))
+      {
+          return 1;
+      }
+    }else if ((e1->hbType == HB_CIRCLE) & (e2->hbType == HB_CIRCLE))
+    {
+      if (collide_circle(vector2d(e1->hitCircle.x,e1->hitCircle.y),e1->hitCircle.r,vector2d(e2->hitCircle.x,e2->hitCircle.y),e2->hitCircle.r))
+      {
+          return 1;
+      }
+    }else if ((e1->hbType == HB_CIRCLE) & (e2->hbType == HB_RECT))
+    {
+      if (gf2d_circle_rect_overlap(e1->hitCircle,gf2d_rect_from_sdl_rect(e2->hitBox)))
+      {
+          return 1;
+      }
+    }else if ((e1->hbType == HB_RECT) & (e2->hbType == HB_CIRCLE))
+    {
+      if (gf2d_circle_rect_overlap(e2->hitCircle,gf2d_rect_from_sdl_rect(e1->hitBox)))
+      {
+          return 1;
+      }
     }
+    
     return 0;
 }
 

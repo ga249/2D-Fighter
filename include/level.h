@@ -6,6 +6,7 @@
 #include "simple_logger.h"
 #include "player.h"
 #include "collisions.h"
+#include "gf2d_sprite.h"
 
 
 #define LEVEL_WIDTH 1200

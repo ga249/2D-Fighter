@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.c": "c",
-        "gf2d_draw.h": "c"
+        "gf2d_draw.h": "c",
+        "gf2d_graphics.h": "c"
     }
 }

@@ -52,9 +52,10 @@ void spawn_projectile(Entity *parent, char *type)
         self->unitDirection = tempDir;
 
         self->ttd = 2;
-        self->frame = 0;
+        self->frame = 1;
         self->sprite->actionSpec = vector3d(0,0,2);
         self->tag = ENT_PROJ;
+        self->hbType = HB_CIRCLE;
     }
 }
 
