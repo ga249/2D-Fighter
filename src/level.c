@@ -98,9 +98,9 @@ void level_update(Level *lvl)
     }
 }
 
-void level_spawn_players(Level *level)
-{
-    if(!level)return;
-    spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 0);
-    spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 1);
-}
+//void level_spawn_players(Level *level)
+//{
+//    if(!level)return;
+//    spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 0);
+//    spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 1);
+//}

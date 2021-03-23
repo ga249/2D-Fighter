@@ -35,6 +35,8 @@ typedef struct Entity_S
     Circle      hitCircle;      /**<circle used for collisions>*/
     int         tag;            /**<type of entity:player - 0>*/
     int         flag;           /**<flag used for if players are attacking to trigger damage>*/
+    struct Entity_S      *parent;        /**<parent entity used for projectiles>*/
+    struct Entity_S      *target;        /**<target entity used to identify target>*/
 
     int         health;
     int         ki;
@@ -98,11 +100,22 @@ void entity_update_all();
 void entity_draw_all();
 
 /**
+ * @brief draw every active entity's hitbox
+ */
+void entity_draw_all_hitboxes();
+
+//void ent_move_vert(Entity *e, int i);
+//
+//void ent_move_horiz(Entity *e, int i);
+
+/**
  * @brief Make 2 entities face each other
  * @param ent1 entity 1
  * @param ent2 entity 2
  */
 void ent_face_eo(Entity *ent1, Entity *ent2);
+
+void ent_move_toward_ent(Entity *e1, Entity *e2);
 
 /**
  * @brief get a pointer player 1

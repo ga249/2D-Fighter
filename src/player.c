@@ -6,7 +6,8 @@
 #include "level.h"
 
 const Uint8 * keys;
-float projBuffer;
+float p1projBuffer;
+float p2projBuffer;
 
 
 void player1Think(Entity *self)
@@ -65,9 +66,9 @@ void player1Think(Entity *self)
 
             if (self->flip->y)
             {
-                self->frame = 1;
-            }else{
                 self->frame = 2;
+            }else{
+                self->frame = 1;
             }
 
         }
@@ -77,9 +78,9 @@ void player1Think(Entity *self)
 
             if (self->flip->y)
             {
-                self->frame = 2;
-            }else{
                 self->frame = 1;
+            }else{
+                self->frame = 2;
             }
         }
     }
@@ -116,11 +117,12 @@ void player1Think(Entity *self)
         if (self->ki < 350)self->ki += 1;
     }
 
-    if (keys[SDL_SCANCODE_Y])
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_B))
     {
-        if (SDL_GetTicks() - projBuffer >= 300)
+        self->frame = 15;
+        if (SDL_GetTicks() - p1projBuffer >= 300)
         {
-            projBuffer = SDL_GetTicks();
+            p1projBuffer = SDL_GetTicks();
             spawn_projectile(self, "kiBlastSmall");
         }
         
@@ -232,6 +234,17 @@ void player2Think(Entity *self)
         if (self->ki < 350)self->ki += 1;
     }
 
+    if (keys[SDL_SCANCODE_U])
+    {
+        self->frame = 17;
+        if (SDL_GetTicks() - p2projBuffer >= 300)
+        {
+            p2projBuffer = SDL_GetTicks();
+            spawn_projectile(self, "kiBlastSmall");
+        }
+        
+    }
+
 }
 
 Entity *spawnPlayer(Vector2D initPos, Sprite *sprite, int isPlayer2)
@@ -250,31 +263,43 @@ Entity *spawnPlayer(Vector2D initPos, Sprite *sprite, int isPlayer2)
     self->flip->x = 0;
     self->flip->y = 0;
     self->speed = 2;
-    //self->offset = vector2d_new();
-    //self->offset->x = 20;
-    //self->offset->y = 20;
     self->scale = vector2d_new();
     self->scale->x = 1.5;
     self->scale->y = 1.5;
 
+    self->hbType = HB_CIRCLE;
     SDL_Rect hb;            //hitbox
     hb.x = 100;
     hb.y = 100;
     hb.h = 65 * 1.5;
     hb.w = 48 * 1.5;
     self->hitBox = hb;
-    Circle hc = gf2d_circle(self->position.x + 23,self->position.y + 35, 30);
+    Circle hc = gf2d_circle(self->position.x ,self->position.y , 30);
     self->hitCircle = hc;
 
     if (isPlayer2)
     {
         self->think = player2Think;
         self->p = 2;
+        self->offset = vector2d_new();
+        self->offset->x = 23;
+        self->offset->y = 60;
+
+        self->rotation->x = 23;           //sets offset for ents rot
+        self->rotation->y = 60;           //
+
         self->sprite->actionSpec = vector3d(0,0,6);
         self->controller = SDL_GameControllerOpen(1);
     }else{
         self->think = player1Think;
         self->p = 1;
+        self->offset = vector2d_new();
+        self->offset->x = 30;
+        self->offset->y = 40;
+
+        self->rotation->x = 30;           //sets offset for ents rot
+        self->rotation->y = 40;           //
+
         self->sprite->actionSpec = vector3d(0,0,5);
         self->controller = SDL_GameControllerOpen(0);
     }

@@ -49,7 +49,9 @@ int main(int argc, char * argv[])
     mouse->actionSpec = vector3d(0,0,16);
     lvl = level_new(bg);
     player1 = spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/goku.png",77,80,5), 0);
-    player2 = spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
+    player2 = spawnPlayer(vector2d(400,300),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
+    player1->target = player2;
+    player2->target = player1;
     gfc_rect_set(p1Health, 10, 10, 500, 20);
     gfc_rect_set(p2Health, lvl->bounds.w - 510, 10, 500, 20);
     gfc_rect_set(p1Ki, 10, 35, 500, 20);
@@ -118,9 +120,9 @@ int main(int argc, char * argv[])
                 //TODO: draw menus
             }
             
-            gf2d_draw_circle(vector2d(player1->hitCircle.x,player1->hitCircle.y),player1->hitCircle.r, mouseColor);
-            gf2d_draw_circle(vector2d(player2->hitCircle.x,player2->hitCircle.y),player2->hitCircle.r, mouseColor);
-
+            //gf2d_draw_circle(vector2d(player1->hitCircle.x,player1->hitCircle.y),player1->hitCircle.r, mouseColor);
+            //gf2d_draw_circle(vector2d(player2->hitCircle.x,player2->hitCircle.y),player2->hitCircle.r, mouseColor);
+            entity_draw_all_hitboxes();
             //gf2d_draw_rect(player1->hitBox, mouseColor);
             //gf2d_draw_rect(player2->hitBox, mouseColor);
             

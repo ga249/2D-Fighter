@@ -144,6 +144,39 @@ void entity_draw_all()
     }
 }
 
+void entity_draw_hitbox(Entity *self)
+{
+    switch(self->hbType)
+    {
+        case HB_CIRCLE:
+            gf2d_draw_circle(vector2d(self->hitCircle.x,self->hitCircle.y),self->hitCircle.r, vector4d(255,100,255,200));
+            break;
+        case HB_RECT:
+            gf2d_draw_rect(self->hitBox, vector4d(255,100,255,200));
+            break;
+    }
+}
+
+void entity_draw_all_hitboxes()
+{
+    int i;
+    for (i = 0; i < entity_manager.maxEnts; i++)
+    {
+        if (!entity_manager.entityList[i]._inuse)continue;
+        entity_draw_hitbox(&entity_manager.entityList[i]);
+    }
+}
+
+//void ent_move_vert(Entity *e, int i)
+//{
+//    e->position.y += i;
+//}
+//
+//void ent_move_horiz(Entity *e, int i)
+//{
+//    e->position.x += i;
+//}
+
 void ent_face_eo(Entity *ent1, Entity *ent2)
 {
     Vector3D *rot = vector3d_new();
@@ -154,38 +187,51 @@ void ent_face_eo(Entity *ent1, Entity *ent2)
     angle->y = ent2->position.y - ent1->position.y;
     
     rot->z = vector_angle(angle->x,angle->y);
-    rot->z += 180;
+    
+    
     ent1->rotation->z = rot->z;
+    rot->z += 180;
+    angle_clamp_degrees(&rot->z);
+
     ent2->rotation->z = rot->z;
 
     vector2d_normalize(angle);
     ent1->unitDirection = angle;
+    //angle->x *= -1;
+    //angle->y *= -1;
+    ent2->unitDirection = angle;
     
-    //slog("x: %f | y: %f", angle->x, angle->y);
+    //slog("e1: %f | e2: %f", ent1->rotation->z, ent2->rotation->z);
 
-    ent1->rotation->x = 23;           //
-    ent1->rotation->y = 30;           //sets offset for ents rot
-    ent2->rotation->x = 23;           //
-    ent2->rotation->y = 50;           //
+    //ent1->rotation->x = 10;           //
+    //ent1->rotation->y = 30;           //sets offset for ents rot
+    //ent2->rotation->x = 23;           //
+    //ent2->rotation->y = 50;           //
 
     if (ent1->position.x > ent2->position.x)
     {
-        ent1->flip->x = 1;
-        ent1->flip->y = 0;
+        ent1->flip->y = 1; //0;
     }else{
-        ent1->flip->x = 1;
-        ent1->flip->y = 1;
+        ent1->flip->y = 0; //1;
     }
 
     if (ent2->position.x > ent1->position.x)
     {
-        //self->flip->x = 1;
         ent2->flip->y = 1;
+        ent2->offset->y = 60;
+        ent2->rotation->y = 60;
     }else{
-        //self->flip->x = 0;
         ent2->flip->y = 0;
+        ent2->offset->y = 40;
+        ent2->rotation->y = 40;
     }
 }
+
+void ent_move_toward_ent(Entity *e1, Entity *e2)
+{
+
+}
+
 
 Entity *get_player_1()
 {
