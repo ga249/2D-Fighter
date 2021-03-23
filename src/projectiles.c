@@ -21,18 +21,17 @@ void projectile_think(Entity *self)
     //------------------------------------
         slog("%f,%f",self->unitDirection->x,self->unitDirection->y);
         vector2d_set_magnitude(self->unitDirection, 2.0);
-        if (self->parent->p == 1)
-        {
-            self->position.x += self->unitDirection->x;
-            self->position.y += self->unitDirection->y;
-        }else if (self->parent->p == 2){
-            self->position.x -= self->unitDirection->x;
-            self->position.y -= self->unitDirection->y;
-        }
+        //if (self->parent->p == 1)
+        //{
+        //    self->position.x += self->unitDirection->x;
+        //    self->position.y += self->unitDirection->y;
+        //}else if (self->parent->p == 2){
+        //    self->position.x -= self->unitDirection->x;
+        //    self->position.y -= self->unitDirection->y;
+        //}
         
         self->hitCircle.x = self->position.x;
         self->hitCircle.y = self->position.y;
-        gf2d_draw_circle(vector2d(self->hitCircle.x,self->hitCircle.y),self->hitCircle.r, vector4d(255,100,255,200));
 
     }
 }
@@ -49,8 +48,8 @@ void spawn_projectile(Entity *parent, char *type)
     self->parent = parent;
     self->target = parent->target;
     self->rotation = vector3d_new();
-    self->rotation->x = -20;
-    self->rotation->y = 50;
+    self->rotation->x = 43;//-20;
+    self->rotation->y = 40.5;//-25;
     if (strcmp(type, "kiBlastSmall") == 0)
     {
         self->position = parent->position;
@@ -63,10 +62,19 @@ void spawn_projectile(Entity *parent, char *type)
 
         tempDir = parent->unitDirection;
         self->unitDirection = tempDir;
+        slog("x: %f | y: %f", tempDir->x, tempDir->y);
         vector2d_set_magnitude(self->unitDirection, 60);
 
-        self->position.x += self->unitDirection->x;
-        self->position.y -= self->unitDirection->y;
+        if (parent->p == 1)
+        {
+            self->position.x += self->unitDirection->x;
+            self->position.y += self->unitDirection->y;
+        }else if (parent->p == 2)
+        {
+            self->position.x -= self->unitDirection->x;
+            self->position.y -= self->unitDirection->y;
+        }
+        
 
         self->ttd = 2;
         self->frame = 1;
@@ -76,14 +84,8 @@ void spawn_projectile(Entity *parent, char *type)
         Circle hc = gf2d_circle(parent->position.x,parent->position.y, 20);
         self->hitCircle = hc;
         self->offset = vector2d_new();
-        if (parent->flip->y == 0)
-        {
-            self->offset->x = -20;
-            self->offset->y = 50;
-        }else{
-            self->offset->x = 0;
-            self->offset->y = -15;
-        }
+        self->offset->x = 43;
+        self->offset->y = 40.5;
         
     }
 }
