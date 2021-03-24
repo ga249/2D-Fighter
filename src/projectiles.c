@@ -12,7 +12,7 @@ void projectile_think(Entity *self)
         case ENT_PROJ:
             if(self->ttd == 0.0)
             {
-                //entity_free(self);
+                entity_free(self);
             }else
             {        
                 if(self->ttd > 0)

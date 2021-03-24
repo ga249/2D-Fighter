@@ -9,6 +9,8 @@ Objective is pretty straight forward... kill the other guy.
 -triangle is super move.
 -down on the d pad is charge.
 -r1 is block.
+-Space saves location and stats of players
+-c loads them
 
 If you are blocking, you don't take damange, instead you lose ki.
 
