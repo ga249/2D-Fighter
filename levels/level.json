@@ -1,0 +1,14 @@
+{
+    "level":
+    {
+        "bgImage": "images/backgrounds/namek.png",
+        "p1posx": 360,
+        "p1posy": 300,
+        "p2posx": 860,
+        "p2posy": 300,
+        "p1health": 500,
+        "p2health": 500,
+        "p1ki": 350,
+        "p2ki": 350
+    }
+}
