@@ -16,6 +16,8 @@
 #define ENT_PROJ        7
 #define HB_RECT         8
 #define HB_CIRCLE       9
+#define ENT_BLAST       10
+#define BLASTING        11
 
 
 
@@ -40,6 +42,7 @@ typedef struct Entity_S
 
     int         health;
     int         ki;
+    int         dmg;
 
     Vector2D     position;      /**<where the entity is in 2D space>*/
     Vector3D     *rotation;     /**<rotation of entity (mainly for player)>*/

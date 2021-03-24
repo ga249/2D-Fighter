@@ -7,20 +7,47 @@
 
 void damage_deal(Entity *parent, Entity *victim)
 {
-    if ((parent->flag ==  ATK_HEAVY) & (victim->flag != BLOCKING))
+    switch (victim->flag)
     {
-        victim->health -= 20;
+        case BLOCKING:
+            if(victim->ki > 10)
+            {
+                victim->ki -= 10;
+                break;
+            }
+            
+        default:
+            victim->flag = DAMAGED;
+            switch (parent->flag)
+            {
+                case ATK_HEAVY:
+                    victim->health -= 20;
+                    break;
+                case ATK_LIGHT:
+                    victim->health -= 10;
+                    break;
+            }
+            if(parent->tag == ENT_PROJ || parent->tag == ENT_BLAST)
+            {
+                victim->health -= parent->dmg;
+            }
+                
     }
-    if ((parent->flag ==  ATK_LIGHT) & (victim->flag != BLOCKING))
-    {
-        victim->health -= 10;
-    }
-    if (victim->flag != BLOCKING)
-    {
-        victim->flag = DAMAGED;
-    }else{
-        victim->ki -= 10;
-    }  
+    
+    //if ((parent->flag ==  ATK_HEAVY) & (victim->flag != BLOCKING))
+    //{
+    //    victim->health -= 20;
+    //}
+    //if ((parent->flag ==  ATK_LIGHT) & (victim->flag != BLOCKING))
+    //{
+    //    victim->health -= 10;
+    //}
+    //if (victim->flag != BLOCKING)
+    //{
+    //    victim->flag = DAMAGED;
+    //}else{
+    //    victim->ki -= 10;
+    //}  
 }
 
 void damage_collision_check()           //broken

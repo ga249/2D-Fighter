@@ -93,6 +93,7 @@ void entity_free(Entity *self)
     self->hitBox.y = 0;
     self->hitBox.w = 0;
     self->hitBox.h = 0;
+    self->hitCircle.r = 0;
     self->_inuse = 0;
 }
 

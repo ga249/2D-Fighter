@@ -12,6 +12,7 @@ int main(int argc, char * argv[])
     /*variable declarations*/
     int done = 0;
     float atkBuffer;
+    float idleResetBuffer;
     const Uint8 * keys;
     Sprite *bg;
     Entity *player1;
@@ -44,12 +45,12 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
-    bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+    bg = gf2d_sprite_load_image("images/backgrounds/namek.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     mouse->actionSpec = vector3d(0,0,16);
-    lvl = level_new(bg);
-    player1 = spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/goku.png",77,80,5), 0);
-    player2 = spawnPlayer(vector2d(400,300),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
+    player1 = spawnPlayer(vector2d(360,300),gf2d_sprite_load_all("images/goku.png",77,80,5), 0);
+    player2 = spawnPlayer(vector2d(840,300),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
+    lvl = level_new(bg, player1, player2);
     player1->target = player2;
     player2->target = player1;
     gfc_rect_set(p1Health, 10, 10, 500, 20);
@@ -71,7 +72,9 @@ int main(int argc, char * argv[])
         p2Health.w = player2->health;
         p2Health.x = lvl->bounds.w - p2Health.w - 10;
         p1Ki.w = player1->ki;
+        if(player1->ki <= 0)p1Ki.w = 1;
         p2Ki.w = player2->ki;
+        if(player2->ki <= 0)p2Ki.w = 1;
         p2Ki.x = lvl->bounds.w - p2Ki.w - 10;
 
 
@@ -100,10 +103,13 @@ int main(int argc, char * argv[])
                     atkBuffer = SDL_GetTicks();
                     damage_deal(player2,player1);
                 }
-            }else{
-                player1->flag = IDLE;
-                player2->flag = IDLE;
             }
+        }
+        if (SDL_GetTicks() - idleResetBuffer >= 300)
+        {
+            idleResetBuffer = SDL_GetTicks();
+            player1->flag = IDLE;
+            player2->flag = IDLE;
         }
         //---------------------------------------------------------------------------
         
@@ -120,11 +126,7 @@ int main(int argc, char * argv[])
                 //TODO: draw menus
             }
             
-            //gf2d_draw_circle(vector2d(player1->hitCircle.x,player1->hitCircle.y),player1->hitCircle.r, mouseColor);
-            //gf2d_draw_circle(vector2d(player2->hitCircle.x,player2->hitCircle.y),player2->hitCircle.r, mouseColor);
             entity_draw_all_hitboxes();
-            //gf2d_draw_rect(player1->hitBox, mouseColor);
-            //gf2d_draw_rect(player2->hitBox, mouseColor);
             
             //UI elements last
             gf2d_draw_rect(p1Health, v4d_red);

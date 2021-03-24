@@ -10,7 +10,7 @@
 
 
 #define LEVEL_WIDTH 1200
-#define LEVEL_HEIGHT 720
+#define LEVEL_HEIGHT 680
 
 Vector4D v4d_red;
 Vector4D v4d_green;
@@ -26,6 +26,8 @@ typedef struct
     SDL_Rect    bounds;         /**<Level bounds to prevent leaving stage>*/
     int         done;           /**<Done condition>*/
     int         paused;
+    Entity      *p1;
+    Entity      *p2;
     SJson       *config;
     SJson       *save;
     int         winLose;
@@ -38,7 +40,9 @@ typedef struct
  * @param bounds Level bounds
  * @return Object type of Level
  * */
-Level *level_new(Sprite *backgroundFile);
+Level *level_new(Sprite *backgroundFile, Entity *p1, Entity *p2);
+
+void level_load_into(Level *level, const char *filename);
 
 /**
  * @brief Frees level and its sprite

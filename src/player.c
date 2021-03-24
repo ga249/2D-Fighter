@@ -8,6 +8,8 @@
 const Uint8 * keys;
 float p1projBuffer;
 float p2projBuffer;
+float p1superBuffer;
+float p2superBuffer;
 
 
 void player1Think(Entity *self)
@@ -30,18 +32,30 @@ void player1Think(Entity *self)
 
     if (self->flag != IDLE)
     {
-        if((self->flag != DAMAGED) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)))
+        if((self->flag != DAMAGED) & (self->flag != BLASTING) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_Y)) &!(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)))
         {
             self->flag = IDLE;
         }
     }
-    if (self->flag == IDLE)self->frame = 0;
+    if (self->flag == BLASTING)
+    {
+        self->speed = 0;
+    }
+    
+    if (self->flag == IDLE)
+    {
+        self->frame = 0;
+        self->speed = 2;
+    }
 
     //Set dash speed if X is pressed
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))
     {
-        speed = SPEED_DASH;
-        self->ki -= 2;
+        if (self->ki > 2)
+        {
+            speed = SPEED_DASH;
+            self->ki -= 2;
+        }
     }
     //---------------------------------
     //----MOVEMENT----
@@ -119,13 +133,30 @@ void player1Think(Entity *self)
 
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_B))
     {
-        self->frame = 15;
-        if (SDL_GetTicks() - p1projBuffer >= 300)
+        if (self->ki > 0)
         {
-            p1projBuffer = SDL_GetTicks();
-            spawn_projectile(self, "kiBlastSmall");
+            self->frame = 15;
+            if (SDL_GetTicks() - p1projBuffer >= 300)
+            {
+                p1projBuffer = SDL_GetTicks();
+                spawn_projectile(self, "kiBlastSmall");
+            }
         }
-        
+    }
+
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_Y) & (self->flag != CHARGING))
+    {
+        self->frame = 18;
+        if (self->ki > 200)
+        {
+            if (SDL_GetTicks() - p1superBuffer >= 1000)
+            {
+                p1superBuffer = SDL_GetTicks();
+                spawn_projectile(self, "superBlast");
+            }
+            
+            
+        }
     }
 
 }
@@ -160,8 +191,11 @@ void player2Think(Entity *self)
     //Set dash speed if X is pressed
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))
     {
-        speed = SPEED_DASH;
-        self->ki -= 2;
+        if (self->ki > 2)
+        {
+            speed = SPEED_DASH;
+            self->ki -= 2;
+        }
     }
     //---------------------------------
     //----MOVEMENT----
@@ -234,15 +268,32 @@ void player2Think(Entity *self)
         if (self->ki < 350)self->ki += 1;
     }
 
-    if (keys[SDL_SCANCODE_U])
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_B) || keys[SDL_SCANCODE_U])
     {
-        self->frame = 17;
-        if (SDL_GetTicks() - p2projBuffer >= 300)
+        if (self->ki > 0)
         {
-            p2projBuffer = SDL_GetTicks();
-            spawn_projectile(self, "kiBlastSmall");
+            self->frame = 17;
+            if (SDL_GetTicks() - p2projBuffer >= 300)
+            {
+                p2projBuffer = SDL_GetTicks();
+                spawn_projectile(self, "kiBlastSmall");
+            }
         }
-        
+    }
+
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_Y) & (self->flag != CHARGING))
+    {
+        self->frame = 21;
+        if (self->ki > 200)
+        {
+            if (SDL_GetTicks() - p2superBuffer >= 1000)
+            {
+                p2superBuffer = SDL_GetTicks();
+                spawn_projectile(self, "superBlast");
+            }
+            
+            
+        }
     }
 
 }
