@@ -44,6 +44,8 @@ Level *level_new(Sprite *backgroundFile, Entity *p1, Entity *p2);
 
 void level_load_into(Level *level, const char *filename);
 
+void level_save(Level *level, const char *filename);
+
 /**
  * @brief Frees level and its sprite
  * */

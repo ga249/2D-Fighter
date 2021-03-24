@@ -147,6 +147,11 @@ int main(int argc, char * argv[])
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
 
         ent_face_eo(player1,player2);
+
+        if((player1->health <= 0) || (player2->health <= 0))
+        {
+            done = 1;
+        }
         
         //slog("rotation: %f", rot->z);
         if (keys[SDL_SCANCODE_ESCAPE] || SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START))done = 1; // exit condition

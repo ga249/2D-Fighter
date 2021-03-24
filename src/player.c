@@ -240,7 +240,7 @@ void player2Think(Entity *self)
     }
     //--------------------------------------------
 
-    if ((SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)||keys[SDL_SCANCODE_L]) & (self->flag != DAMAGED))
+    if ((SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X) & (self->flag != DAMAGED)))
     {
         self->flag = ATK_LIGHT;
         self->frame += .075;

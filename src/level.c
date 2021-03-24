@@ -61,7 +61,33 @@ void level_load_into(Level *level, const char *filename)
     sj_get_integer_value(sj_object_get_value(LevelJS, "p1ki"), &level->p1->ki);
     sj_get_integer_value(sj_object_get_value(LevelJS, "p2ki"), &level->p2->ki);
 
+    sj_free(LevelJS);
+    sj_free(json);
+}
 
+void level_save(Level *level, const char *filename)
+{
+    SJson *json, *LevelJS;
+    json = sj_object_new();
+    LevelJS = sj_object_new();
+    
+    sj_object_insert(json, "level", LevelJS);
+
+    sj_object_insert(LevelJS, "bgImage", sj_new_str("images/backgrounds/namek.png"));
+    sj_object_insert(LevelJS, "p1posx", sj_new_float(level->p1->position.x));
+    sj_object_insert(LevelJS, "p1posy", sj_new_float(level->p1->position.y));
+    sj_object_insert(LevelJS, "p2posx", sj_new_float(level->p2->position.x));
+    sj_object_insert(LevelJS, "p2posy", sj_new_float(level->p2->position.y));
+    sj_object_insert(LevelJS, "p1health", sj_new_int(level->p1->health));
+    sj_object_insert(LevelJS, "p2health", sj_new_int(level->p2->health));
+    sj_object_insert(LevelJS, "p1ki", sj_new_int(level->p1->ki));
+    sj_object_insert(LevelJS, "p2ki", sj_new_int(level->p2->ki));
+
+    sj_save(json, (char *)filename);
+    sj_free(LevelJS);
+    sj_free(json);
+
+    
 }
 
 void level_free(Level *level)
@@ -132,6 +158,33 @@ void level_update(Level *lvl)
             }else{
                 lvl->paused = 1;
             }
+        }
+    }
+    if (keys[SDL_SCANCODE_L])
+    {
+        if (SDL_GetTicks() - pauseBuffer >= 200)
+        {
+            pauseBuffer = SDL_GetTicks();
+
+            level_load_into(lvl, "levels/level.json");
+        }
+    }
+    if (keys[SDL_SCANCODE_SPACE])
+    {
+        if (SDL_GetTicks() - pauseBuffer >= 200)
+        {
+            pauseBuffer = SDL_GetTicks();
+
+            level_save(lvl, "levels/save.json");
+        }
+    }
+    if (keys[SDL_SCANCODE_C])
+    {
+        if (SDL_GetTicks() - pauseBuffer >= 200)
+        {
+            pauseBuffer = SDL_GetTicks();
+
+            level_load_into(lvl, "levels/save.json");
         }
     }
 }
