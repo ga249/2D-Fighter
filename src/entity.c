@@ -4,6 +4,7 @@
 #include "gf2d_draw.h"
 #include "damage.h"
 #include "gfc_vector.h"
+#include "player.h"
 
 const Uint8 * keys;
 static EntityManager entity_manager = {0};
@@ -94,6 +95,7 @@ void entity_free(Entity *self)
     self->hitBox.w = 0;
     self->hitBox.h = 0;
     self->hitCircle.r = 0;
+    fmap_free(self->frameMapping);
     self->_inuse = 0;
 }
 
@@ -211,20 +213,30 @@ void ent_face_eo(Entity *ent1, Entity *ent2)
 
     if (ent1->position.x > ent2->position.x)
     {
-        ent1->flip->y = 1; //0;
+        ent1->flip->y = 1; 
+        if (ent1->altY)
+        {
+            ent1->offset->y = ent1->altY;
+            ent1->rotation->y = ent1->altY;
+        }
     }else{
-        ent1->flip->y = 0; //1;
+        ent1->flip->y = 0; 
+        ent1->offset->y = ent1->mainY;
+        ent1->rotation->y = ent1->mainY;
     }
 
     if (ent2->position.x > ent1->position.x)
     {
         ent2->flip->y = 1;
-        ent2->offset->y = 60;
-        ent2->rotation->y = 60;
+        if (ent2->altY)
+        {
+            ent2->offset->y = ent2->altY;
+            ent2->rotation->y = ent2->altY;
+        }
     }else{
         ent2->flip->y = 0;
-        ent2->offset->y = 40;
-        ent2->rotation->y = 40;
+        ent2->offset->y = ent2->mainY;
+        ent2->rotation->y = ent2->mainY;
     }
 }
 

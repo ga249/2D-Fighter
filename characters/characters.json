@@ -1,0 +1,65 @@
+{
+    "goku":
+    {
+        "sprite": "images/goku.png",
+        "sWidth":           77,
+        "sHeight":          80,
+        "offsetX":          30,
+        "offsetY":          40,
+        "altY":             0,
+        "FPL":              5,
+        "frameMappings":    
+        {   
+            "idle":         0,
+            "right":        1,
+            "left":         2,
+            "down":         3,
+            "up":           4,
+            "charging":     5,
+            "chargingEnd":  7,
+            "blocking":     19,
+            "melee":        11,
+            "meleeEnd":     14,
+            "kiblast":      15,
+            "super":        16,
+            "superEnd":     18,
+            "hit":          20,
+            "death":        22,
+            "thrown":       21,
+            "superBlast":   0,
+            "superBlastEnd":5
+        }
+    },
+    "piccolo":
+    {
+        "sprite": "images/piccolo.png",
+        "sWidth":           85,
+        "sHeight":          100,
+        "offsetX":          23,
+        "offsetY":          40,
+        "altY":             60,
+        "FPL":              6,
+        "frameMappings":    
+        {   
+            "idle":         0,
+            "right":        1,
+            "left":         2,
+            "down":         3,
+            "up":           4,
+            "charging":     5,
+            "chargingEnd":  7,
+            "blocking":     22,
+            "melee":        11,
+            "meleeEnd":     16,
+            "kiblast":      17,
+            "super":        18,
+            "superEnd":     21,
+            "hit":          23,
+            "death":        25,
+            "thrown":       24,
+            "superBlast":   6,
+            "superBlastEnd":13
+        }
+    }
+    
+}

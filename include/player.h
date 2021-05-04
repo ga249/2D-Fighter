@@ -9,9 +9,50 @@
 #define SPEED_BASE      2
 #define SPEED_DASH      4
 
+typedef struct FrameMapping_S
+{
+    Uint8   _inuse;         /**<check if this entity in memory is active or not>*/    
+    int     idle;
+    int     right;
+    int     left;
+    int     down;      
+    int     up;       
+    int     charging;    
+    int     chargingEnd;
+    int     blocking;
+    int     melee;  
+    int     meleeEnd;    
+    int     kiblast;   
+    int     super;      
+    int     superEnd;
+    int     hit;         
+    int     death;
+    int     thrown;    
+    int     superBlast; 
+    int     superBlastEnd;
+}FrameMapping;
+
+typedef struct FMapManager_S
+{
+    Uint32  maxMaps;         /**<Maximum number of frame maps*/
+    FrameMapping  *fmapList;     /**<List of frame maps*/
+}FMapManager;
+
+FrameMapping *frameMap_new();
+
+/**
+ * @brief initialize the frame map manager
+ * @param maxMaps upper bound of maximum concurrent entities to be supported
+ * @note must be called before creating a new entity
+ */
+void fmap_manager_init(Uint32 maxMaps);
+
+void fmap_free(FrameMapping *self);
+
 void player1Think(Entity *self);
 
 void player2Think(Entity *self);
+
 
 /**
  * @brief declare player ent
@@ -21,7 +62,7 @@ void player2Think(Entity *self);
  * @param target 
  * @return pointer to a player entity
  */
-Entity *spawnPlayer(Vector2D initPos, Sprite *sprite, int isPlayer2);
+Entity *spawnPlayer(Vector2D initPos, int isPlayer2, char *charcater);
 
 
 #endif

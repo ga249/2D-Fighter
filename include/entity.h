@@ -27,6 +27,8 @@ typedef struct Entity_S
     Sprite      *sprite;        /**<a pointer to the sprite that is used by this entity>*/
     float        frame;         /**<current frame for the sprite>*/
     Vector2D    *offset;        /**<offset of sprite draw>*/
+    int         mainY;
+    int         altY;
     Vector2D    *scale;         /**<scaleOffset of sprite draw>*/
     Vector2D    *flip;          /**<(flip Horiz,flip Vert)>*/
     int         speed;          /**<Speed at which ent moves>*/
@@ -51,7 +53,7 @@ typedef struct Entity_S
     int         p;              /**<int to identify player 1 and 2>*/
 
     SDL_GameController *controller; /**<pointer to SDL_GameController (used for players)*/
-    void         *typeOfEnt;    /**<void pointer to be set to what type of entity I want>*/
+    void         *frameMapping;    /**<void pointer to a struct that has frame info for each character>*/
     int          done;
     void (*think)(struct Entity_S *self);       /**<called when an entity draws>*/
 }Entity;

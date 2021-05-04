@@ -40,6 +40,7 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
+    fmap_manager_init(1084);
     entity_manager_init(1084);
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
@@ -48,8 +49,8 @@ int main(int argc, char * argv[])
     bg = gf2d_sprite_load_image("images/backgrounds/namek.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     mouse->actionSpec = vector3d(0,0,16);
-    player1 = spawnPlayer(vector2d(360,300),gf2d_sprite_load_all("images/goku.png",77,80,5), 0);
-    player2 = spawnPlayer(vector2d(840,300),gf2d_sprite_load_all("images/piccolo.png",85,100,6), 1);
+    player1 = spawnPlayer(vector2d(360,300), 0, "piccolo");
+    player2 = spawnPlayer(vector2d(840,300), 1, "goku");
     lvl = level_new(bg, player1, player2);
     player1->target = player2;
     player2->target = player1;

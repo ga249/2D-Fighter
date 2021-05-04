@@ -42,6 +42,7 @@ void projectile_think(Entity *self)
                     damage_deal(self,self->target);
                     entity_free(self);
                 }
+                self->frame = 1;
 
             }
         case ENT_BLAST:
