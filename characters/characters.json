@@ -16,18 +16,18 @@
             "down":         3,
             "up":           4,
             "charging":     5,
-            "chargingEnd":  7,
+            "chargingEnd":  8,
             "blocking":     19,
             "melee":        11,
-            "meleeEnd":     14,
+            "meleeEnd":     15,
             "kiblast":      15,
             "super":        16,
-            "superEnd":     18,
+            "superEnd":     19,
             "hit":          20,
             "death":        22,
             "thrown":       21,
             "superBlast":   0,
-            "superBlastEnd":5
+            "superBlastEnd":6
         }
     },
     "piccolo":
@@ -47,18 +47,18 @@
             "down":         3,
             "up":           4,
             "charging":     5,
-            "chargingEnd":  7,
+            "chargingEnd":  8,
             "blocking":     22,
             "melee":        11,
-            "meleeEnd":     16,
+            "meleeEnd":     17,
             "kiblast":      17,
             "super":        18,
-            "superEnd":     21,
+            "superEnd":     22,
             "hit":          23,
             "death":        25,
             "thrown":       24,
             "superBlast":   6,
-            "superBlastEnd":13
+            "superBlastEnd":14
         }
     }
     

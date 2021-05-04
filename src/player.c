@@ -83,6 +83,7 @@ void player1Think(Entity *self)
     SDL_GameController *c = self->controller;
     int speed = self->speed;
     speed = SPEED_BASE;
+    float startFrame,endFrame;
 
     //get controller leftstick input
     float lx = SDL_GameControllerGetAxis(c, SDL_CONTROLLER_AXIS_LEFTX);
@@ -109,7 +110,7 @@ void player1Think(Entity *self)
     
     if (self->flag == IDLE)
     {
-        self->frame = 0;
+        self->frame = self->frameMapping->idle;
         self->speed = 2;
     }
 
@@ -124,20 +125,22 @@ void player1Think(Entity *self)
     }
     //---------------------------------
     //----MOVEMENT----
+
+    
     if (self->flag == DAMAGED)
     {
-        self->frame = 20;
+        self->frame = self->frameMapping->hit;
     }else
     {
         if (keys[SDL_SCANCODE_W] || ly < -600)
         {
             self->position.y -= speed;      //move up
-            self->frame = 4;
+            self->frame = self->frameMapping->up;
         }
         if (keys[SDL_SCANCODE_S] || ly > 600)
         {
             self->position.y += speed;      //move down
-            self->frame = 3;
+            self->frame = self->frameMapping->down;
         }
         if (keys[SDL_SCANCODE_D] || lx > 600)
         {
@@ -145,9 +148,9 @@ void player1Think(Entity *self)
 
             if (self->flip->y)
             {
-                self->frame = 2;
+                self->frame = self->frameMapping->left;
             }else{
-                self->frame = 1;
+                self->frame = self->frameMapping->right;
             }
 
         }
@@ -157,9 +160,9 @@ void player1Think(Entity *self)
 
             if (self->flip->y)
             {
-                self->frame = 1;
+                self->frame = self->frameMapping->right;
             }else{
-                self->frame = 2;
+                self->frame = self->frameMapping->left;
             }
         }
     }
@@ -172,10 +175,12 @@ void player1Think(Entity *self)
     {
         self->flag = ATK_LIGHT;
         self->frame += .075;
-        //slog("%f",self->frame);
-        if ((self->frame > 15) || (self->frame < 11))
+        slog("%f",self->frame);
+        startFrame = self->frameMapping->melee;
+        endFrame = 17;
+        if ((self->frame > endFrame) || (self->frame < startFrame))
         {
-            self->frame = 11;
+            self->frame = startFrame;
         }
         //self->frame += .1;
     }
@@ -185,7 +190,7 @@ void player1Think(Entity *self)
         if (self->flag != DAMAGED)
         {
             self->flag = BLOCKING;
-            self->frame = 19;
+            self->frame = self->frameMapping->blocking;
         }
     }
 
@@ -394,24 +399,24 @@ void player_load(Entity *player,  const char *filename, char *character)
     FrameMapping *fmap = frameMap_new();
 
     fmapJson = sj_object_get_value(characterJson,"frameMappings");
-    sj_get_integer_value(sj_object_get_value(fmapJson, "idle"), &fmap->idle);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "right"), &fmap->right);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "left"), &fmap->left);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "down"), &fmap->down);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "up"), &fmap->up);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "charging"), &fmap->charging);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "chargingEnd"), &fmap->chargingEnd);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "blocking"), &fmap->blocking);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "melee"), &fmap->melee);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "meleeEnd"), &fmap->meleeEnd);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "kiblast"), &fmap->kiblast);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "super"), &fmap->super);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "superEnd"), &fmap->superEnd);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "hit"), &fmap->hit);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "death"), &fmap->death);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "thrown"), &fmap->thrown);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "superBlast"), &fmap->superBlast);
-    sj_get_integer_value(sj_object_get_value(fmapJson, "superBlastEnd"), &fmap->superBlastEnd);
+    sj_get_float_value(sj_object_get_value(fmapJson, "idle"), &fmap->idle);
+    sj_get_float_value(sj_object_get_value(fmapJson, "right"), &fmap->right);
+    sj_get_float_value(sj_object_get_value(fmapJson, "left"), &fmap->left);
+    sj_get_float_value(sj_object_get_value(fmapJson, "down"), &fmap->down);
+    sj_get_float_value(sj_object_get_value(fmapJson, "up"), &fmap->up);
+    sj_get_float_value(sj_object_get_value(fmapJson, "charging"), &fmap->charging);
+    sj_get_float_value(sj_object_get_value(fmapJson, "chargingEnd"), &fmap->chargingEnd);
+    sj_get_float_value(sj_object_get_value(fmapJson, "blocking"), &fmap->blocking);
+    sj_get_float_value(sj_object_get_value(fmapJson, "melee"), &fmap->melee);
+    sj_get_float_value(sj_object_get_value(fmapJson, "meleeEnd"), &fmap->meleeEnd);
+    sj_get_float_value(sj_object_get_value(fmapJson, "kiblast"), &fmap->kiblast);
+    sj_get_float_value(sj_object_get_value(fmapJson, "super"), &fmap->super);
+    sj_get_float_value(sj_object_get_value(fmapJson, "superEnd"), &fmap->superEnd);
+    sj_get_float_value(sj_object_get_value(fmapJson, "hit"), &fmap->hit);
+    sj_get_float_value(sj_object_get_value(fmapJson, "death"), &fmap->death);
+    sj_get_float_value(sj_object_get_value(fmapJson, "thrown"), &fmap->thrown);
+    sj_get_float_value(sj_object_get_value(fmapJson, "superBlast"), &fmap->superBlast);
+    sj_get_float_value(sj_object_get_value(fmapJson, "superBlastEnd"), &fmap->superBlastEnd);
 
     player->frameMapping = fmap;
 

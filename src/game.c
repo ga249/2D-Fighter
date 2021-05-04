@@ -109,8 +109,8 @@ int main(int argc, char * argv[])
         if (SDL_GetTicks() - idleResetBuffer >= 300)
         {
             idleResetBuffer = SDL_GetTicks();
-            player1->flag = IDLE;
-            player2->flag = IDLE;
+            if((player1->flag != ATK_LIGHT))player1->flag = IDLE;
+            if((player2->flag != ATK_LIGHT))player2->flag = IDLE;
         }
         //---------------------------------------------------------------------------
         

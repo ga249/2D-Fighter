@@ -12,24 +12,24 @@
 typedef struct FrameMapping_S
 {
     Uint8   _inuse;         /**<check if this entity in memory is active or not>*/    
-    int     idle;
-    int     right;
-    int     left;
-    int     down;      
-    int     up;       
-    int     charging;    
-    int     chargingEnd;
-    int     blocking;
-    int     melee;  
-    int     meleeEnd;    
-    int     kiblast;   
-    int     super;      
-    int     superEnd;
-    int     hit;         
-    int     death;
-    int     thrown;    
-    int     superBlast; 
-    int     superBlastEnd;
+    float     idle;
+    float     right;
+    float     left;
+    float     down;      
+    float     up;       
+    float     charging;    
+    float     chargingEnd;
+    float     blocking;
+    float     melee;  
+    float     meleeEnd;    
+    float     kiblast;   
+    float     super;      
+    float     superEnd;
+    float     hit;         
+    float     death;
+    float     thrown;    
+    float     superBlast; 
+    float     superBlastEnd;
 }FrameMapping;
 
 typedef struct FMapManager_S

@@ -6,6 +6,7 @@
 #include "gfc_list.h"
 #include "gf2d_shape.h"
 
+
 #define ENT_PLAYER      0
 #define ATK_LIGHT       1
 #define ATK_HEAVY       2
@@ -53,7 +54,7 @@ typedef struct Entity_S
     int         p;              /**<int to identify player 1 and 2>*/
 
     SDL_GameController *controller; /**<pointer to SDL_GameController (used for players)*/
-    void         *frameMapping;    /**<void pointer to a struct that has frame info for each character>*/
+    struct FrameMapping_S         *frameMapping;    /**<void pointer to a struct that has frame info for each character>*/
     int          done;
     void (*think)(struct Entity_S *self);       /**<called when an entity draws>*/
 }Entity;
