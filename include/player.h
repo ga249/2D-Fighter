@@ -18,18 +18,18 @@ typedef struct FrameMapping_S
     float     down;      
     float     up;       
     float     charging;    
-    float     chargingEnd;
+    float     endCharging;
     float     blocking;
     float     melee;  
-    float     meleeEnd;    
+    float     endMelee;    
     float     kiblast;   
-    float     super;      
-    float     superEnd;
+    float     super_key;      
+    float     end_Super;
     float     hit;         
     float     death;
     float     thrown;    
     float     superBlast; 
-    float     superBlastEnd;
+    float     endSuperBlast;
 }FrameMapping;
 
 typedef struct FMapManager_S
@@ -49,9 +49,9 @@ void fmap_manager_init(Uint32 maxMaps);
 
 void fmap_free(FrameMapping *self);
 
-void player1Think(Entity *self);
+void playerThink(Entity *self);
 
-void player2Think(Entity *self);
+//void player2Think(Entity *self);
 
 
 /**

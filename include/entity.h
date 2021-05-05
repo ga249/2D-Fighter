@@ -55,6 +55,7 @@ typedef struct Entity_S
 
     SDL_GameController *controller; /**<pointer to SDL_GameController (used for players)*/
     struct FrameMapping_S         *frameMapping;    /**<void pointer to a struct that has frame info for each character>*/
+    float        superBlastSpeed;
     int          done;
     void (*think)(struct Entity_S *self);       /**<called when an entity draws>*/
 }Entity;

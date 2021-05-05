@@ -8,6 +8,7 @@
         "offsetY":          40,
         "altY":             0,
         "FPL":              5,
+        "superBlastSpeed":  2.25,
         "frameMappings":    
         {   
             "idle":         0,
@@ -16,18 +17,18 @@
             "down":         3,
             "up":           4,
             "charging":     5,
-            "chargingEnd":  8,
+            "endCharging":  7,
             "blocking":     19,
             "melee":        11,
-            "meleeEnd":     15,
+            "endMelee":     15,
             "kiblast":      15,
-            "super":        16,
-            "superEnd":     19,
+            "super_key":        16,
+            "end_Super":     18,
             "hit":          20,
             "death":        22,
             "thrown":       21,
             "superBlast":   0,
-            "superBlastEnd":6
+            "endSuperBlast":6
         }
     },
     "piccolo":
@@ -39,6 +40,7 @@
         "offsetY":          40,
         "altY":             60,
         "FPL":              6,
+        "superBlastSpeed":  1.25,
         "frameMappings":    
         {   
             "idle":         0,
@@ -47,18 +49,18 @@
             "down":         3,
             "up":           4,
             "charging":     5,
-            "chargingEnd":  8,
+            "endCharging":  7,
             "blocking":     22,
             "melee":        11,
-            "meleeEnd":     17,
+            "endMelee":     17,
             "kiblast":      17,
-            "super":        18,
-            "superEnd":     22,
+            "super_key":        18,
+            "end_Super":     21,
             "hit":          23,
             "death":        25,
             "thrown":       24,
             "superBlast":   6,
-            "superBlastEnd":14
+            "endSuperBlast":14
         }
     }
     

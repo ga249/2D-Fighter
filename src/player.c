@@ -77,13 +77,12 @@ void fmap_free(FrameMapping *self)
     if(self->_inuse)self->_inuse = 0;
 }
 
-void player1Think(Entity *self)
+void playerThink(Entity *self)
 {
     keys = SDL_GetKeyboardState(NULL);
     SDL_GameController *c = self->controller;
     int speed = self->speed;
     speed = SPEED_BASE;
-    float startFrame,endFrame;
 
     //get controller leftstick input
     float lx = SDL_GameControllerGetAxis(c, SDL_CONTROLLER_AXIS_LEFTX);
@@ -175,12 +174,10 @@ void player1Think(Entity *self)
     {
         self->flag = ATK_LIGHT;
         self->frame += .075;
-        slog("%f",self->frame);
-        startFrame = self->frameMapping->melee;
-        endFrame = 17;
-        if ((self->frame > endFrame) || (self->frame < startFrame))
+        //slog("%f",self->frame);
+        if ((self->frame > self->frameMapping->endMelee) || (self->frame < self->frameMapping->melee))
         {
-            self->frame = startFrame;
+            self->frame = self->frameMapping->melee;
         }
         //self->frame += .1;
     }
@@ -197,7 +194,7 @@ void player1Think(Entity *self)
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_DPAD_DOWN) & (self->flag != DAMAGED))
     {
         self->flag = CHARGING;
-        self->frame = 7;
+        self->frame = self->frameMapping->endCharging;
         if (self->ki < 350)self->ki += 1;
     }
 
@@ -205,7 +202,7 @@ void player1Think(Entity *self)
     {
         if (self->ki > 0)
         {
-            self->frame = 15;
+            self->frame = self->frameMapping->kiblast;
             if (SDL_GetTicks() - p1projBuffer >= 300)
             {
                 p1projBuffer = SDL_GetTicks();
@@ -216,7 +213,7 @@ void player1Think(Entity *self)
 
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_Y) & (self->flag != CHARGING))
     {
-        self->frame = 18;
+        self->frame = self->frameMapping->end_Super;
         if (self->ki > 200)
         {
             if (SDL_GetTicks() - p1superBuffer >= 1000)
@@ -231,6 +228,162 @@ void player1Think(Entity *self)
 
 }
 
+void player_load(Entity *player,  const char *filename, char *character)
+{
+    SJson *json, *characterJson, *fmapJson;
+    const char *string;
+
+    json = sj_load(filename);
+
+    characterJson = sj_object_get_value(json,character);
+
+    int sWidth,sHeight,fpl;
+    string = sj_get_string_value(sj_object_get_value(characterJson,"sprite"));
+    sj_get_integer_value(sj_object_get_value(characterJson, "FPL"), &fpl);
+    sj_get_integer_value(sj_object_get_value(characterJson, "sWidth"), &sWidth);
+    sj_get_integer_value(sj_object_get_value(characterJson, "sHeight"), &sHeight);
+    if (string)
+    {
+        player->sprite = gf2d_sprite_load_all((char *)string, sWidth, sHeight, fpl);
+    }
+    player->offset = vector2d_new();
+    sj_get_float_value(sj_object_get_value(characterJson, "offsetX"), &player->offset->x);
+    sj_get_float_value(sj_object_get_value(characterJson, "offsetY"), &player->offset->y);
+    player->rotation = vector3d_new();
+    sj_get_float_value(sj_object_get_value(characterJson, "offsetX"), &player->rotation->x);
+    sj_get_float_value(sj_object_get_value(characterJson, "offsetY"), &player->rotation->y);
+    sj_get_integer_value(sj_object_get_value(characterJson, "offsetY"), &player->mainY);
+    sj_get_integer_value(sj_object_get_value(characterJson, "altY"), &player->altY);
+    sj_get_float_value(sj_object_get_value(characterJson, "superBlastSpeed"), &player->superBlastSpeed);
+    player->sprite->actionSpec = vector3d(0,0,fpl);
+
+    FrameMapping *fmap = frameMap_new();
+
+    fmapJson = sj_object_get_value(characterJson,"frameMappings");
+    sj_get_float_value(sj_object_get_value(fmapJson, "idle"), &fmap->idle);
+    sj_get_float_value(sj_object_get_value(fmapJson, "right"), &fmap->right);
+    sj_get_float_value(sj_object_get_value(fmapJson, "left"), &fmap->left);
+    sj_get_float_value(sj_object_get_value(fmapJson, "down"), &fmap->down);
+    sj_get_float_value(sj_object_get_value(fmapJson, "up"), &fmap->up);
+    sj_get_float_value(sj_object_get_value(fmapJson, "charging"), &fmap->charging);
+    sj_get_float_value(sj_object_get_value(fmapJson, "endCharging"), &fmap->endCharging);
+    sj_get_float_value(sj_object_get_value(fmapJson, "blocking"), &fmap->blocking);
+    sj_get_float_value(sj_object_get_value(fmapJson, "endMelee"), &fmap->endMelee);
+    sj_get_float_value(sj_object_get_value(fmapJson, "melee"), &fmap->melee);
+    sj_get_float_value(sj_object_get_value(fmapJson, "kiblast"), &fmap->kiblast);
+    sj_get_float_value(sj_object_get_value(fmapJson, "super_key"), &fmap->super_key);
+    sj_get_float_value(sj_object_get_value(fmapJson, "end_Super"), &fmap->end_Super);
+    sj_get_float_value(sj_object_get_value(fmapJson, "hit"), &fmap->hit);
+    sj_get_float_value(sj_object_get_value(fmapJson, "death"), &fmap->death);
+    sj_get_float_value(sj_object_get_value(fmapJson, "thrown"), &fmap->thrown);
+    sj_get_float_value(sj_object_get_value(fmapJson, "superBlast"), &fmap->superBlast);
+    sj_get_float_value(sj_object_get_value(fmapJson, "endSuperBlast"), &fmap->endSuperBlast);
+
+    player->frameMapping = fmap;
+
+    slog("Character loaded");
+
+    sj_free(fmapJson);
+    sj_free(characterJson);
+    sj_free(json);
+}
+
+Entity *spawnPlayer(Vector2D initPos, int isPlayer2, char *character)
+{
+    Entity *self;
+    self = entity_new();
+    if (!self)return NULL;
+    player_load(self, "characters/characters.json", character);
+    self->position = initPos;
+    self->health = 500;
+    self->ki = 350;
+    self->tag = ENT_PLAYER;
+    self->frame = 0;
+    self->flip = vector2d_new();
+    self->flip->x = 0;
+    self->flip->y = 0;
+    self->speed = 2;
+    self->scale = vector2d_new();
+    self->scale->x = 1.5;
+    self->scale->y = 1.5;
+
+    self->hbType = HB_CIRCLE;
+    Circle hc = gf2d_circle(self->position.x ,self->position.y , 30);
+    self->hitCircle = hc;
+    self->think = playerThink;
+
+    if (isPlayer2)
+    {
+        self->p = 2;
+        self->controller = SDL_GameControllerOpen(1);
+    }else{
+        self->p = 1;
+        self->controller = SDL_GameControllerOpen(0);
+    }
+    return self;
+}
+
+
+
+/*
+Entity *self;
+    self = entity_new();
+    if (!self)return NULL;
+    self->sprite = sprite;
+    self->position = initPos;
+    self->rotation = vector3d_new();
+    self->health = 500;
+    self->ki = 350;
+    self->tag = ENT_PLAYER;
+    self->frame = 0;
+    self->flip = vector2d_new();
+    self->flip->x = 0;
+    self->flip->y = 0;
+    self->speed = 2;
+    self->scale = vector2d_new();
+    self->scale->x = 1.5;
+    self->scale->y = 1.5;
+
+    self->hbType = HB_CIRCLE;
+    //SDL_Rect hb;            //hitbox
+    //hb.x = 100;
+    //hb.y = 100;
+    //hb.h = 65 * 1.5;
+    //hb.w = 48 * 1.5;
+    //self->hitBox = hb;
+    Circle hc = gf2d_circle(self->position.x ,self->position.y , 30);
+    self->hitCircle = hc;
+
+    if (isPlayer2)
+    {
+        self->think = player2Think;
+        self->p = 2;
+        self->offset = vector2d_new();
+        self->offset->x = 23;
+        self->offset->y = 60;
+
+        self->rotation->x = 23;           //sets offset for ents rot
+        self->rotation->y = 60;           //
+
+        self->sprite->actionSpec = vector3d(0,0,6);
+        self->controller = SDL_GameControllerOpen(1);
+    }else{
+        self->think = player1Think;
+        self->p = 1;
+        self->offset = vector2d_new();
+        self->offset->x = 30;
+        self->offset->y = 40;
+
+        self->rotation->x = 30;           //sets offset for ents rot
+        self->rotation->y = 40;           //
+
+        self->sprite->actionSpec = vector3d(0,0,5);
+        self->controller = SDL_GameControllerOpen(0);
+    }
+    return self;
+*/
+
+/*
 void player2Think(Entity *self)
 {
     keys = SDL_GetKeyboardState(NULL);
@@ -315,9 +468,9 @@ void player2Think(Entity *self)
         self->flag = ATK_LIGHT;
         self->frame += .075;
         slog("%f",self->frame);
-        if ((self->frame > 16) || (self->frame < 11))
+        if ((self->frame > self->frameMapping->endMelee) || (self->frame < self->frameMapping->melee))
         {
-            self->frame = 11;
+            self->frame = self->frameMapping->melee;
         }
         //self->frame += .1;
     }
@@ -367,158 +520,4 @@ void player2Think(Entity *self)
     }
 
 }
-
-void player_load(Entity *player,  const char *filename, char *character)
-{
-    SJson *json, *characterJson, *fmapJson;
-    const char *string;
-
-    json = sj_load(filename);
-
-    characterJson = sj_object_get_value(json,character);
-
-    int sWidth,sHeight,fpl;
-    string = sj_get_string_value(sj_object_get_value(characterJson,"sprite"));
-    sj_get_integer_value(sj_object_get_value(characterJson, "FPL"), &fpl);
-    sj_get_integer_value(sj_object_get_value(characterJson, "sWidth"), &sWidth);
-    sj_get_integer_value(sj_object_get_value(characterJson, "sHeight"), &sHeight);
-    if (string)
-    {
-        player->sprite = gf2d_sprite_load_all((char *)string, sWidth, sHeight, fpl);
-    }
-    player->offset = vector2d_new();
-    sj_get_float_value(sj_object_get_value(characterJson, "offsetX"), &player->offset->x);
-    sj_get_float_value(sj_object_get_value(characterJson, "offsetY"), &player->offset->y);
-    player->rotation = vector3d_new();
-    sj_get_float_value(sj_object_get_value(characterJson, "offsetX"), &player->rotation->x);
-    sj_get_float_value(sj_object_get_value(characterJson, "offsetY"), &player->rotation->y);
-    sj_get_integer_value(sj_object_get_value(characterJson, "offsetY"), &player->mainY);
-    sj_get_integer_value(sj_object_get_value(characterJson, "altY"), &player->altY);
-    player->sprite->actionSpec = vector3d(0,0,fpl);
-
-    FrameMapping *fmap = frameMap_new();
-
-    fmapJson = sj_object_get_value(characterJson,"frameMappings");
-    sj_get_float_value(sj_object_get_value(fmapJson, "idle"), &fmap->idle);
-    sj_get_float_value(sj_object_get_value(fmapJson, "right"), &fmap->right);
-    sj_get_float_value(sj_object_get_value(fmapJson, "left"), &fmap->left);
-    sj_get_float_value(sj_object_get_value(fmapJson, "down"), &fmap->down);
-    sj_get_float_value(sj_object_get_value(fmapJson, "up"), &fmap->up);
-    sj_get_float_value(sj_object_get_value(fmapJson, "charging"), &fmap->charging);
-    sj_get_float_value(sj_object_get_value(fmapJson, "chargingEnd"), &fmap->chargingEnd);
-    sj_get_float_value(sj_object_get_value(fmapJson, "blocking"), &fmap->blocking);
-    sj_get_float_value(sj_object_get_value(fmapJson, "melee"), &fmap->melee);
-    sj_get_float_value(sj_object_get_value(fmapJson, "meleeEnd"), &fmap->meleeEnd);
-    sj_get_float_value(sj_object_get_value(fmapJson, "kiblast"), &fmap->kiblast);
-    sj_get_float_value(sj_object_get_value(fmapJson, "super"), &fmap->super);
-    sj_get_float_value(sj_object_get_value(fmapJson, "superEnd"), &fmap->superEnd);
-    sj_get_float_value(sj_object_get_value(fmapJson, "hit"), &fmap->hit);
-    sj_get_float_value(sj_object_get_value(fmapJson, "death"), &fmap->death);
-    sj_get_float_value(sj_object_get_value(fmapJson, "thrown"), &fmap->thrown);
-    sj_get_float_value(sj_object_get_value(fmapJson, "superBlast"), &fmap->superBlast);
-    sj_get_float_value(sj_object_get_value(fmapJson, "superBlastEnd"), &fmap->superBlastEnd);
-
-    player->frameMapping = fmap;
-
-    sj_free(fmapJson);
-    sj_free(characterJson);
-    sj_free(json);
-}
-
-Entity *spawnPlayer(Vector2D initPos, int isPlayer2, char *character)
-{
-    Entity *self;
-    self = entity_new();
-    if (!self)return NULL;
-    player_load(self, "characters/characters.json", character);
-    self->position = initPos;
-    self->health = 500;
-    self->ki = 350;
-    self->tag = ENT_PLAYER;
-    self->frame = 0;
-    self->flip = vector2d_new();
-    self->flip->x = 0;
-    self->flip->y = 0;
-    self->speed = 2;
-    self->scale = vector2d_new();
-    self->scale->x = 1.5;
-    self->scale->y = 1.5;
-
-    self->hbType = HB_CIRCLE;
-    Circle hc = gf2d_circle(self->position.x ,self->position.y , 30);
-    self->hitCircle = hc;
-
-    if (isPlayer2)
-    {
-        self->think = player2Think;
-        self->p = 2;
-        
-        self->controller = SDL_GameControllerOpen(1);
-    }else{
-        self->think = player1Think;
-        self->p = 1;
-        
-        self->controller = SDL_GameControllerOpen(0);
-    }
-    return self;
-}
-
-
-
-/*
-Entity *self;
-    self = entity_new();
-    if (!self)return NULL;
-    self->sprite = sprite;
-    self->position = initPos;
-    self->rotation = vector3d_new();
-    self->health = 500;
-    self->ki = 350;
-    self->tag = ENT_PLAYER;
-    self->frame = 0;
-    self->flip = vector2d_new();
-    self->flip->x = 0;
-    self->flip->y = 0;
-    self->speed = 2;
-    self->scale = vector2d_new();
-    self->scale->x = 1.5;
-    self->scale->y = 1.5;
-
-    self->hbType = HB_CIRCLE;
-    //SDL_Rect hb;            //hitbox
-    //hb.x = 100;
-    //hb.y = 100;
-    //hb.h = 65 * 1.5;
-    //hb.w = 48 * 1.5;
-    //self->hitBox = hb;
-    Circle hc = gf2d_circle(self->position.x ,self->position.y , 30);
-    self->hitCircle = hc;
-
-    if (isPlayer2)
-    {
-        self->think = player2Think;
-        self->p = 2;
-        self->offset = vector2d_new();
-        self->offset->x = 23;
-        self->offset->y = 60;
-
-        self->rotation->x = 23;           //sets offset for ents rot
-        self->rotation->y = 60;           //
-
-        self->sprite->actionSpec = vector3d(0,0,6);
-        self->controller = SDL_GameControllerOpen(1);
-    }else{
-        self->think = player1Think;
-        self->p = 1;
-        self->offset = vector2d_new();
-        self->offset->x = 30;
-        self->offset->y = 40;
-
-        self->rotation->x = 30;           //sets offset for ents rot
-        self->rotation->y = 40;           //
-
-        self->sprite->actionSpec = vector3d(0,0,5);
-        self->controller = SDL_GameControllerOpen(0);
-    }
-    return self;
 */

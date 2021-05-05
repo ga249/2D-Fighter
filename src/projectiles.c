@@ -46,23 +46,20 @@ void projectile_think(Entity *self)
 
             }
         case ENT_BLAST:
+            vector2d_set_magnitude(self->unitDirection, self->parent->superBlastSpeed);
             if (self->parent->p == 1)
             {
-                vector2d_set_magnitude(self->unitDirection, 2.25);
                 self->hitCircle.x += self->unitDirection->x;
                 self->hitCircle.y += self->unitDirection->y;
-                self->frame += .05;
-                if (self->frame >= 5)entity_free(self);
             }else if (self->parent->p == 2)
             {
-                vector2d_set_magnitude(self->unitDirection, 1.5);
                 self->hitCircle.x -= self->unitDirection->x;
                 self->hitCircle.y -= self->unitDirection->y;
-                self->frame += .05;
-                if (self->frame >= 14)entity_free(self);
             }
+            self->frame += .05;
+            if (self->frame >= self->parent->frameMapping->endSuperBlast)entity_free(self);
             //self->parent->frame = 18;
-            self->parent->flag = BLASTING;
+            //self->parent->flag = BLASTING;
 
             if (collide_ent(self,self->target))
             {
@@ -152,13 +149,13 @@ void spawn_projectile(Entity *parent, char *type)
         {
             self->position.x += self->unitDirection->x;
             self->position.y += self->unitDirection->y;
-            self->frame = 0;
         }else if (parent->p == 2)
         {
             self->position.x -= self->unitDirection->x;
             self->position.y -= self->unitDirection->y;
-            self->frame = 7;
         }
+        self->frame = self->parent->frameMapping->superBlast;
+        slog("%f",self->frame);
 
         self->hbType = HB_CIRCLE;
         Circle hc = gf2d_circle(self->position.x,self->position.y, 25);
