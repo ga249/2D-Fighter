@@ -9,6 +9,7 @@
         "altY":             0,
         "FPL":              5,
         "superBlastSpeed":  2.25,
+        "hbWidth":          30,
         "frameMappings":    
         {   
             "idle":         0,
@@ -41,6 +42,7 @@
         "altY":             60,
         "FPL":              6,
         "superBlastSpeed":  1.25,
+        "hbWidth":          30,
         "frameMappings":    
         {   
             "idle":         0,

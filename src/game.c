@@ -6,6 +6,16 @@
 #include "player.h"
 #include "level.h"
 #include "damage.h"
+#include "menus.h"
+
+void draw_ui(SDL_Rect p1Health,SDL_Rect p2Health,SDL_Rect p1Ki,SDL_Rect p2Ki)
+{
+    gf2d_draw_rect(p1Health, v4d_red);
+    gf2d_draw_rect(p2Health, v4d_red);
+    gf2d_draw_rect(p1Ki, v4d_blue);
+    gf2d_draw_rect(p2Ki, v4d_blue);
+}
+
 
 int main(int argc, char * argv[])
 {
@@ -22,6 +32,9 @@ int main(int argc, char * argv[])
     SDL_Rect p2Health;
     SDL_Rect p1Ki;
     SDL_Rect p2Ki;
+
+    Menu     *quitMenu;
+    SDL_Rect quitBox;
 
     int mx,my;
     float mf = 0;
@@ -40,9 +53,10 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
-    fmap_manager_init(1084);
+    fmap_manager_init(100);
     entity_manager_init(1084);
     gf2d_sprite_init(1024);
+    menu_manager_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
@@ -58,9 +72,12 @@ int main(int argc, char * argv[])
     gfc_rect_set(p2Health, lvl->bounds.w - 510, 10, 500, 20);
     gfc_rect_set(p1Ki, 10, 35, 500, 20);
     gfc_rect_set(p2Ki, lvl->bounds.w - 510, 35, 500, 20);
+    gfc_rect_set(quitBox, lvl->bounds.w/2, lvl->bounds.h - 60, 250, 40);
+
+    quitMenu = menu_generic(MAIN_MENU, quitBox, quitThink);
 
     /*main game loop*/
-    while(!done)
+    while(!lvl->done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
@@ -81,11 +98,20 @@ int main(int argc, char * argv[])
 
         level_update(lvl);
         
-        if (!lvl->paused)
+        switch (lvl->screen)
         {
-            entity_update_all();
+        case IN_GAME:
+            if (!lvl->paused)
+            {
+                entity_update_all();
+            }
+            break;
+
+        case MAIN_MENU:
+            menu_update_group(MAIN_MENU);
+            break;
         }
-        
+
         //DAMANGE_COLLISION_CHECK--------------------------------------------------
         if (collide_ent(player1,player2))
         {
@@ -120,20 +146,27 @@ int main(int argc, char * argv[])
             level_draw(lvl);
 
             //drawing entitys
-            if (!lvl->paused)
+            switch (lvl->screen)
             {
-                entity_draw_all();
-            }else{
-                //TODO: draw menus
+            case IN_GAME:
+                if (!lvl->paused)
+                {
+                    entity_draw_all();
+                }
+                break;
+
+            case MAIN_MENU:
+                menu_draw_group(MAIN_MENU);
+                break;
             }
             
             entity_draw_all_hitboxes();
             
             //UI elements last
-            gf2d_draw_rect(p1Health, v4d_red);
-            gf2d_draw_rect(p2Health, v4d_red);
-            gf2d_draw_rect(p1Ki, v4d_blue);
-            gf2d_draw_rect(p2Ki, v4d_blue);
+            if (!lvl->paused && lvl->screen == IN_GAME)
+            {
+                draw_ui(p1Health,p2Health,p1Ki,p2Ki);
+            }
 
             gf2d_sprite_draw(
                 mouse,
@@ -154,6 +187,14 @@ int main(int argc, char * argv[])
             done = 1;
         }
         
+        if (keys[SDL_SCANCODE_F4])
+        {
+            player_load(player1, "characters/characters.json", "goku");
+        }else if (keys[SDL_SCANCODE_F5])
+        {
+            player_load(player1, "characters/characters.json", "piccolo");
+        }
+
         //slog("rotation: %f", rot->z);
         if (keys[SDL_SCANCODE_ESCAPE] || SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());

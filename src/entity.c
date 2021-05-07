@@ -170,6 +170,16 @@ void entity_draw_all_hitboxes()
     }
 }
 
+Entity *menu_selector(Vector2D initPos)
+{
+    Entity *self;
+    self = entity_new();
+    if (!self)return NULL;
+    
+
+    return self;
+}
+
 //void ent_move_vert(Entity *e, int i)
 //{
 //    e->position.y += i;

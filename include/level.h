@@ -12,6 +12,13 @@
 #define LEVEL_WIDTH 1200
 #define LEVEL_HEIGHT 680
 
+#define MAIN_MENU              0
+#define CHARACTER_SELECT       1
+#define IN_GAME                2
+#define P1_WIN                 3
+#define P2_WIN                 4
+#define P1_LOSE                5
+
 Vector4D v4d_red;
 Vector4D v4d_green;
 Vector4D v4d_blue;
@@ -26,6 +33,7 @@ typedef struct
     SDL_Rect    bounds;         /**<Level bounds to prevent leaving stage>*/
     int         done;           /**<Done condition>*/
     int         paused;
+    int         screen;
     Entity      *p1;
     Entity      *p2;
     SJson       *config;

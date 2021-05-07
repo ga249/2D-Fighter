@@ -187,11 +187,20 @@ void level_update(Level *lvl)
             level_load_into(lvl, "levels/save.json");
         }
     }
-}
 
-//void level_spawn_players(Level *level)
-//{
-//    if(!level)return;
-//    spawnPlayer(vector2d(100,300),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 0);
-//    spawnPlayer(vector2d(400,500),gf2d_sprite_load_all("images/gokuu.png",46,65,5), 1);
-//}
+    if (keys[SDL_SCANCODE_M])
+    {
+        if (SDL_GetTicks() - pauseBuffer >= 200)
+        {
+            pauseBuffer = SDL_GetTicks();
+
+            if (lvl->screen == MAIN_MENU)
+            {
+                lvl->screen = IN_GAME;
+            }else if (lvl->screen == IN_GAME)
+            {
+                lvl->screen = MAIN_MENU;
+            }
+        }
+    }
+}

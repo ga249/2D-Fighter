@@ -246,6 +246,7 @@ void player_load(Entity *player,  const char *filename, char *character)
     {
         player->sprite = gf2d_sprite_load_all((char *)string, sWidth, sHeight, fpl);
     }
+    player->sprite->actionSpec = vector3d(0,0,fpl);
     player->offset = vector2d_new();
     sj_get_float_value(sj_object_get_value(characterJson, "offsetX"), &player->offset->x);
     sj_get_float_value(sj_object_get_value(characterJson, "offsetY"), &player->offset->y);
@@ -255,7 +256,10 @@ void player_load(Entity *player,  const char *filename, char *character)
     sj_get_integer_value(sj_object_get_value(characterJson, "offsetY"), &player->mainY);
     sj_get_integer_value(sj_object_get_value(characterJson, "altY"), &player->altY);
     sj_get_float_value(sj_object_get_value(characterJson, "superBlastSpeed"), &player->superBlastSpeed);
-    player->sprite->actionSpec = vector3d(0,0,fpl);
+    sj_get_float_value(sj_object_get_value(characterJson, "hbWidth"), &player->hbWidth);
+    player->hbType = HB_CIRCLE;
+    Circle hc = gf2d_circle(player->position.x ,player->position.y , player->hbWidth);
+    player->hitCircle = hc;
 
     FrameMapping *fmap = frameMap_new();
 

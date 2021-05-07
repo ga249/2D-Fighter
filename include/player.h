@@ -53,6 +53,7 @@ void playerThink(Entity *self);
 
 //void player2Think(Entity *self);
 
+void player_load(Entity *player,  const char *filename, char *character);
 
 /**
  * @brief declare player ent

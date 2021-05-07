@@ -8,6 +8,8 @@
 
 
 #define ENT_PLAYER      0
+#define ENT_SELECT      1
+
 #define ATK_LIGHT       1
 #define ATK_HEAVY       2
 #define DAMAGED         3
@@ -19,6 +21,7 @@
 #define HB_CIRCLE       9
 #define ENT_BLAST       10
 #define BLASTING        11
+
 
 
 
@@ -38,6 +41,7 @@ typedef struct Entity_S
     int         hbType;         /**<defines whether to use rect or circle hb>*/
     SDL_Rect    hitBox;         /**<rect used for collisions>*/
     Circle      hitCircle;      /**<circle used for collisions>*/
+    float       hbWidth;
     int         tag;            /**<type of entity:player - 0>*/
     int         flag;           /**<flag used for if players are attacking to trigger damage>*/
     struct Entity_S      *parent;        /**<parent entity used for projectiles>*/
