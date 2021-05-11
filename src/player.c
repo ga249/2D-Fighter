@@ -4,12 +4,12 @@
 #include "player.h"
 #include "gf2d_draw.h"
 #include "level.h"
+#include "damage.h"
 
 const Uint8 * keys;
 float p1projBuffer;
-float p2projBuffer;
 float p1superBuffer;
-float p2superBuffer;
+float atkBuffer; 
 
 static FMapManager fmap_manager = {0};
 
@@ -179,7 +179,21 @@ void playerThink(Entity *self)
         {
             self->frame = self->frameMapping->melee;
         }
-        //self->frame += .1;
+        if (is_in_array(self->attackFrames, (int)self->frame))
+        {
+            self->hitCircle.r = self->hbWidth + self->attackDist;
+            if (collide_ent(self, self->target))
+            {
+                if (SDL_GetTicks() - atkBuffer >= 200)
+                {
+                    atkBuffer = SDL_GetTicks();
+                    damage_deal(self, self->target);
+                }
+            }
+        }else{
+            self->hitCircle.r = self->hbWidth;
+        }
+
     }
 
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)||keys[SDL_SCANCODE_J])
@@ -230,7 +244,7 @@ void playerThink(Entity *self)
 
 void player_load(Entity *player,  const char *filename, char *character)
 {
-    SJson *json, *characterJson, *fmapJson;
+    SJson *json, *characterJson, *fmapJson, *atkFramesJson;
     const char *string;
 
     json = sj_load(filename);
@@ -242,6 +256,7 @@ void player_load(Entity *player,  const char *filename, char *character)
     sj_get_integer_value(sj_object_get_value(characterJson, "FPL"), &fpl);
     sj_get_integer_value(sj_object_get_value(characterJson, "sWidth"), &sWidth);
     sj_get_integer_value(sj_object_get_value(characterJson, "sHeight"), &sHeight);
+    sj_get_integer_value(sj_object_get_value(characterJson, "attackDist"), &player->attackDist);
     if (string)
     {
         player->sprite = gf2d_sprite_load_all((char *)string, sWidth, sHeight, fpl);
@@ -261,6 +276,15 @@ void player_load(Entity *player,  const char *filename, char *character)
     Circle hc = gf2d_circle(player->position.x ,player->position.y , player->hbWidth);
     player->hitCircle = hc;
 
+    atkFramesJson = sj_object_get_value(characterJson,"attackFrames");
+
+    player->attackFrames = sj_copy(atkFramesJson);
+    if (sj_array_check(player->attackFrames))slog("yes");
+    if (is_in_array(player->attackFrames, 12))slog("haha");
+    //int num;
+    //sj_get_integer_value(sj_array_get_nth(atkFramesJson, 0), &num);
+    //slog("%i", num); //reeeeeeeeeeeeeeeeee
+    
     FrameMapping *fmap = frameMap_new();
 
     fmapJson = sj_object_get_value(characterJson,"frameMappings");
@@ -287,6 +311,7 @@ void player_load(Entity *player,  const char *filename, char *character)
 
     slog("Character loaded");
 
+    //sj_free(atkFramesJson);
     sj_free(fmapJson);
     sj_free(characterJson);
     sj_free(json);

@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
+#include "gfc_audio.h"
 #include "simple_logger.h"
 #include "entity.h"
 #include "player.h"
@@ -20,9 +21,9 @@ void draw_ui(SDL_Rect p1Health,SDL_Rect p2Health,SDL_Rect p1Ki,SDL_Rect p2Ki)
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
-    int done = 0;
     float atkBuffer;
     float idleResetBuffer;
+    int toggleHb = 0;
     const Uint8 * keys;
     Sprite *bg;
     Entity *player1;
@@ -32,9 +33,6 @@ int main(int argc, char * argv[])
     SDL_Rect p2Health;
     SDL_Rect p1Ki;
     SDL_Rect p2Ki;
-
-    Menu     *quitMenu;
-    SDL_Rect quitBox;
 
     int mx,my;
     float mf = 0;
@@ -57,6 +55,7 @@ int main(int argc, char * argv[])
     entity_manager_init(1084);
     gf2d_sprite_init(1024);
     menu_manager_init(1024);
+    //gfc_audio_init(1020);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
@@ -66,15 +65,15 @@ int main(int argc, char * argv[])
     player1 = spawnPlayer(vector2d(360,300), 0, "piccolo");
     player2 = spawnPlayer(vector2d(840,300), 1, "goku");
     lvl = level_new(bg, player1, player2);
+    lvl->screen = MAIN_MENU;
     player1->target = player2;
     player2->target = player1;
     gfc_rect_set(p1Health, 10, 10, 500, 20);
     gfc_rect_set(p2Health, lvl->bounds.w - 510, 10, 500, 20);
     gfc_rect_set(p1Ki, 10, 35, 500, 20);
     gfc_rect_set(p2Ki, lvl->bounds.w - 510, 35, 500, 20);
-    gfc_rect_set(quitBox, lvl->bounds.w/2, lvl->bounds.h - 60, 250, 40);
-
-    quitMenu = menu_generic(MAIN_MENU, quitBox, quitThink);
+    
+    createMenus();
 
     /*main game loop*/
     while(!lvl->done)
@@ -85,6 +84,7 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
+        //slog("%i, %i", mx, my);
 
         p1Health.w = player1->health;
         p2Health.w = player2->health;
@@ -113,25 +113,25 @@ int main(int argc, char * argv[])
         }
 
         //DAMANGE_COLLISION_CHECK--------------------------------------------------
-        if (collide_ent(player1,player2))
-        {
-            if ((player1->flag == ATK_LIGHT) || (player1->flag == ATK_HEAVY))
-            {
-                if (SDL_GetTicks() - atkBuffer >= 200)
-                {
-                    atkBuffer = SDL_GetTicks();
-                    damage_deal(player1,player2);
-                }
-            }else
-            if ((player2->flag == ATK_LIGHT) || (player2->flag == ATK_HEAVY))
-            {
-                if (SDL_GetTicks() - atkBuffer >= 200)
-                {
-                    atkBuffer = SDL_GetTicks();
-                    damage_deal(player2,player1);
-                }
-            }
-        }
+        //if (collide_ent(player1,player2))
+        //{
+        //    if ((player1->flag == ATK_LIGHT) || (player1->flag == ATK_HEAVY))
+        //    {
+        //        if (SDL_GetTicks() - atkBuffer >= 200)
+        //        {
+        //            atkBuffer = SDL_GetTicks();
+        //            damage_deal(player1,player2);
+        //        }
+        //    }else
+        //    if ((player2->flag == ATK_LIGHT) || (player2->flag == ATK_HEAVY))
+        //    {
+        //        if (SDL_GetTicks() - atkBuffer >= 200)
+        //        {
+        //            atkBuffer = SDL_GetTicks();
+        //            damage_deal(player2,player1);
+        //        }
+        //    }
+        //}
         if (SDL_GetTicks() - idleResetBuffer >= 300)
         {
             idleResetBuffer = SDL_GetTicks();
@@ -160,7 +160,7 @@ int main(int argc, char * argv[])
                 break;
             }
             
-            entity_draw_all_hitboxes();
+            if(toggleHb)entity_draw_all_hitboxes();
             
             //UI elements last
             if (!lvl->paused && lvl->screen == IN_GAME)
@@ -182,9 +182,25 @@ int main(int argc, char * argv[])
 
         ent_face_eo(player1,player2);
 
-        if((player1->health <= 0) || (player2->health <= 0))
+        if((player1->health <= 0))
         {
-            done = 1;
+            if(!lvl->isLocalCoop)
+            {
+                lvl->screen = P1_LOSE;
+            }else if (lvl->isLocalCoop)
+            {
+                lvl->screen = P2_WIN;
+            }
+        }else if (player2->health <= 0)
+        {
+            if(!lvl->isLocalCoop)
+            {
+                lvl->screen = P1_WIN;
+                //TODO: make it move on to next challenger
+            }else if (lvl->isLocalCoop)
+            {
+                lvl->screen = P1_WIN;
+            }
         }
         
         if (keys[SDL_SCANCODE_F4])
@@ -195,8 +211,18 @@ int main(int argc, char * argv[])
             player_load(player1, "characters/characters.json", "piccolo");
         }
 
+        if (keys[SDL_SCANCODE_B])
+        {
+            if (SDL_GetTicks() - atkBuffer >= 200)
+            {
+                atkBuffer = SDL_GetTicks();
+                if (toggleHb)toggleHb = 0;else toggleHb = 1;
+            }
+            
+        }
+
         //slog("rotation: %f", rot->z);
-        if (keys[SDL_SCANCODE_ESCAPE] || SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))done = 1; // exit condition
+        if (keys[SDL_SCANCODE_ESCAPE] || SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))lvl->done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");

@@ -5,6 +5,7 @@
 #include "gf2d_draw.h"
 #include "gfc_list.h"
 #include "gf2d_shape.h"
+#include "simple_json.h"
 
 
 #define ENT_PLAYER      0
@@ -30,6 +31,8 @@ typedef struct Entity_S
     Uint8       _inuse;         /**<check if this entity in memory is active or not>*/
     Sprite      *sprite;        /**<a pointer to the sprite that is used by this entity>*/
     float        frame;         /**<current frame for the sprite>*/
+    SJson       *attackFrames;
+    int         attackDist;
     Vector2D    *offset;        /**<offset of sprite draw>*/
     int         mainY;
     int         altY;
@@ -140,6 +143,7 @@ Entity *get_player_1();
  */
 Entity *get_player_2();
 
+int is_in_array(SJson *array, int num);
 
 //Entity *doneEnt();
 //

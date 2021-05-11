@@ -146,6 +146,17 @@ void level_update(Level *lvl)
     //    lvl
     //}
 
+    switch (lvl->screen)
+    {
+    case MAIN_MENU:
+        lvl->background = gf2d_sprite_load_image("images/backgrounds/mainMenu.png");
+        break;
+    
+    case IN_GAME:
+        lvl->background = gf2d_sprite_load_image("images/backgrounds/namek.png");
+        break;
+    }
+
     if (keys[SDL_SCANCODE_P])
     {
         if (SDL_GetTicks() - pauseBuffer >= 200)

@@ -1,6 +1,8 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
+#include "simple_json.h"
+#include "simple_json_array.h"
 #include "gf2d_sprite.h"
 #include "gf2d_draw.h"
 #include "entity.h"

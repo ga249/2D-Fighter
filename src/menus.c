@@ -126,8 +126,8 @@ void menu_draw_group(int group)
 Menu *menu_generic(
     int         group,
     SDL_Rect    box,
-    //Vector2D    drawOffset,
-    //Sprite      *sprite,
+    Vector2D    drawOffset,
+    Sprite      *sprite,
     void        (*think)(struct Menu_S *self)
 ){
     Menu *menu;
@@ -141,6 +141,45 @@ Menu *menu_generic(
     return menu;
 }
 
+void menu_genericV(
+    int         group,
+    SDL_Rect    box,
+    Vector2D    drawOffset,
+    Sprite      *sprite,
+    void        (*think)(struct Menu_S *self)
+){
+    Menu *menu;
+    menu = menu_new();
+    menu->group = group;
+    menu->box = box;
+    menu->think = think;
+
+    menu->drawOffset = drawOffset;
+    if(sprite == NULL)
+    {
+        menu->sprite = NULL;
+    }else{
+        menu->sprite = sprite;
+    }
+
+}
+
+void createMenus()
+{
+    //Menu *quit, *remoteVs, *challenge;
+    SDL_Rect quitBox, remoteBox, challBox;
+    Level *lvl = level_get_active();
+
+    gfc_rect_set(quitBox, lvl->bounds.w/2 - 80, lvl->bounds.h - 60, 150, 60);
+    gfc_rect_set(remoteBox, 420, 407, 325, 60);
+    gfc_rect_set(challBox, 420, 323, 325, 60);
+
+    menu_genericV(MAIN_MENU,quitBox,vector2d(0,0),NULL,quitThink);
+    menu_genericV(MAIN_MENU,remoteBox,vector2d(0,0),NULL,remoteThink);
+    menu_genericV(MAIN_MENU,challBox,vector2d(0,0),NULL,quitThink);
+ 
+}
+
 void quitThink(Menu *self)
 {
     static int last_level_change = 0;
@@ -152,6 +191,22 @@ void quitThink(Menu *self)
         {
             last_level_change = SDL_GetTicks();
             level_get_active()->done = 1;
+        }
+    }
+}
+
+void remoteThink(Menu *self)
+{
+    static int last_level_change = 0;
+    int mx,my;
+    SDL_GetMouseState(&mx,&my);
+    if (collide_menu(self->box, vector2d(mx,my)))
+    {
+        if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) && last_level_change + 750 < SDL_GetTicks())
+        {
+            last_level_change = SDL_GetTicks();
+            level_get_active()->screen = IN_GAME;
+            level_get_active()->isLocalCoop = 1;
         }
     }
 }

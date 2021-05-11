@@ -290,6 +290,20 @@ Entity *get_player_2()
     return NULL;
 }
 
+int is_in_array(SJson *array, int num)
+{
+    int temp, i;
+    for (i=0;i < sj_array_get_count(array); i++)
+    {
+        sj_get_integer_value(sj_array_get_nth(array, i), &temp);
+        if (num == temp)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 //Entity *doneEnt()
 //{
 //    Entity *self;

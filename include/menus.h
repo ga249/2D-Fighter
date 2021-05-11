@@ -79,12 +79,24 @@ void menu_touch_check(Menu *menu);
 Menu *menu_generic(
     int         group,
     SDL_Rect    box,
-    //Vector2D    drawOffset,
-    //Sprite      *sprite,
+    Vector2D    drawOffset,
+    Sprite      *sprite,
     void        (*think)(struct Menu_S *self)
 );
 
+void menu_genericV(
+    int         group,
+    SDL_Rect    box,
+    Vector2D    drawOffset,
+    Sprite      *sprite,
+    void        (*think)(struct Menu_S *self)
+);
+
+void createMenus();
+
 void quitThink(Menu *self);
+
+void remoteThink(Menu *self);
 
 
 #endif

@@ -10,6 +10,8 @@
         "FPL":              5,
         "superBlastSpeed":  2.25,
         "hbWidth":          30,
+        "attackFrames":     [12,14],
+        "attackDist":       20,
         "frameMappings":    
         {   
             "idle":         0,
@@ -43,6 +45,8 @@
         "FPL":              6,
         "superBlastSpeed":  1.25,
         "hbWidth":          30,
+        "attackFrames":     [12,15],
+        "attackDist":       40,
         "frameMappings":    
         {   
             "idle":         0,
