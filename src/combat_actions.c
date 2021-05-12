@@ -3,6 +3,8 @@
 #include "entity.h"
 #include "player.h"
 #include "damage.h"
+#include "gfc_types.h"
+#include "gfc_vector.h"
 
 float aiprojBuffer;
 float aisuperBuffer;
@@ -27,7 +29,7 @@ void melee_attack(Entity *self)
                 if (SDL_GetTicks() - atkBuffer >= 200)
                 {
                     atkBuffer = SDL_GetTicks();
-                    damage_deal(self, self->target);
+                    if(self->target->afterImgOn == 0)damage_deal(self, self->target);
                 }
             }
         }else{
@@ -158,4 +160,44 @@ int check_dist(Entity *self)
         return 3;
     }
 
+}
+
+void afterImgAway(Entity *self)
+{
+    vector2d_set_magnitude(self->unitDirection, 200);
+    if (self->p == 1)
+    {
+        self->position.x -= self->unitDirection->x;
+        self->position.y -= self->unitDirection->y;
+    }else if (self->p == 2)
+    {
+        self->position.x += self->unitDirection->x;
+        self->position.y += self->unitDirection->y;
+    }
+    
+}
+
+void afterImgSide(Entity *self)
+{
+    int random = rand() % 2;
+    Vector2D tempDir = vector2d(self->unitDirection->x,self->unitDirection->y);
+    Vector2D sideDir;
+    if (random == 0)
+    {
+        sideDir = vector2d_rotate(tempDir, GFC_HALF_PI);
+        
+    }else{
+        sideDir = vector2d_rotate(tempDir, GFC_HALF_PI*GFC_PI);
+    }
+
+    vector2d_set_magnitude(&sideDir, 150);
+    if (self->p == 1)
+    {
+        self->position.x -= sideDir.x;
+        self->position.y -= sideDir.y;
+    }else if (self->p == 2)
+    {
+        self->position.x += sideDir.x;
+        self->position.y += sideDir.y;
+    }
 }

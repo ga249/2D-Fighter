@@ -35,4 +35,8 @@ void move_right(Entity *self);
  */
 int  check_dist(Entity *self);
 
+void afterImgAway(Entity *self);
+
+void afterImgSide(Entity *self);
+
 #endif

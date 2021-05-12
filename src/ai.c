@@ -10,9 +10,11 @@ float thinkBuffer;
 float doBuffer;
 float blockBuffer;
 int   choice;
-int   choice5050;
+int   choiceDefence;
 int   choiceProj;
 int   choiceSuper;
+float aiAfterImgTimer = 0;
+float afterImgBuffer;
 
 int retreatNCharge = 0;
 
@@ -57,13 +59,40 @@ void ai_think(Entity *self)
         if (SDL_GetTicks() - blockBuffer >= 500)
         {
             blockBuffer = SDL_GetTicks();
-            choice5050 = rand() % 2;
-
             
-            //slog("%i", choice5050);
+            if(self->ki > 50)
+            {
+                choiceDefence = rand() % 3;
+            }else{
+                choiceDefence = rand() % 2;
+            }
+        }
+        if (choiceDefence == 1)block(self);
+        if (choiceDefence == 2)self->afterImgOn = 1;;
+    }
 
-        }//else{doBuffer = SDL_GetTicks();}
-        if (choice5050 == 1)block(self);
+    if (self->afterImgOn)
+    {
+        aiAfterImgTimer += 1;
+        self->frame = self->frameMapping->afterImage;
+        if (proj_in_range(self))
+        {
+            afterImgSide(self);
+            self->ki -= 50;
+            self->afterImgOn = 0;
+            afterImgBuffer = SDL_GetTicks();
+        }else if (collide_ent(self, self->target) && self->target->flag == ATK_LIGHT)
+        {
+            afterImgAway(self);
+            self->ki -= 50;
+            self->afterImgOn = 0;
+            afterImgBuffer = SDL_GetTicks();
+        }else if (aiAfterImgTimer >= 100)
+        {
+            self->afterImgOn = 0;
+            aiAfterImgTimer = 0;
+            afterImgBuffer = SDL_GetTicks();
+        }
     }
 
     if (self->ki <= 100)retreatNCharge = 1;

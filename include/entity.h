@@ -22,6 +22,7 @@
 #define HB_CIRCLE       9
 #define ENT_BLAST       10
 #define BLASTING        11
+#define AFTERIMAGE      12
 
 
 
@@ -56,6 +57,7 @@ typedef struct Entity_S
     int         health;
     int         ki;
     int         dmg;
+    int         afterImgOn;
 
     Vector2D     position;      /**<where the entity is in 2D space>*/
     Vector3D     *rotation;     /**<rotation of entity (mainly for player)>*/

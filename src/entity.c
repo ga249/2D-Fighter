@@ -153,9 +153,12 @@ void entity_draw_hitbox(Entity *self)
     {
         case HB_CIRCLE:
             gf2d_draw_circle(vector2d(self->hitCircle.x,self->hitCircle.y),self->hitCircle.r, vector4d(255,100,255,200));
-            gf2d_draw_circle(vector2d(self->aiDistLarge.x,self->aiDistLarge.y),self->aiDistLarge.r, vector4d(255,100,255,200));
-            gf2d_draw_circle(vector2d(self->aiDistMid.x,self->aiDistMid.y),self->aiDistMid.r, vector4d(255,100,255,200));
-            gf2d_draw_circle(vector2d(self->aiDistClose.x,self->aiDistClose.y),self->aiDistClose.r, vector4d(255,100,255,200));
+            if (self->tag == ENT_PLAYER)
+            {
+                gf2d_draw_circle(vector2d(self->aiDistLarge.x,self->aiDistLarge.y),self->aiDistLarge.r, vector4d(255,100,255,200));
+                gf2d_draw_circle(vector2d(self->aiDistMid.x,self->aiDistMid.y),self->aiDistMid.r, vector4d(255,100,255,200));
+                gf2d_draw_circle(vector2d(self->aiDistClose.x,self->aiDistClose.y),self->aiDistClose.r, vector4d(255,100,255,200));
+            }
             break;
         case HB_RECT:
             gf2d_draw_rect(self->hitBox, vector4d(255,100,255,200));
@@ -189,12 +192,12 @@ int proj_in_range(Entity *self)
     for (i = 0; i < entity_manager.maxEnts; i++)
     {
         if (!entity_manager.entityList[i]._inuse)continue;
-        if (entity_manager.entityList[i].tag == ENT_PROJ & collide_ent_circle(&entity_manager.entityList[i],self->aiDistClose))
+        if (entity_manager.entityList[i].tag == ENT_PROJ && collide_ent_circle(&entity_manager.entityList[i],self->aiDistClose))
         {
-            return 1;
-        }else if (entity_manager.entityList[i].tag == ENT_BLAST & collide_ent_circle(&entity_manager.entityList[i],self->aiDistClose))
+            if(entity_manager.entityList[i].parent->p != self->p)return 1;
+        }else if (entity_manager.entityList[i].tag == ENT_BLAST && collide_ent_circle(&entity_manager.entityList[i],self->aiDistClose))
         {
-            return 1;
+            if(entity_manager.entityList[i].parent->p != self->p)return 1;
         }
     }
     return 0;

@@ -4,7 +4,7 @@
 #include "combat_actions.h"
 #include "simple_logger.h"
 #include "entity.h"
-#include "player.h"
+//#include "player.h"
 #include "damage.h"
 #include "collisions.h"
 #include "gfc_types.h"

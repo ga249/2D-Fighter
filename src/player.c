@@ -11,6 +11,8 @@ const Uint8 * keys;
 float p1projBuffer;
 float p1superBuffer;
 float atkBuffer; 
+float afterImgTimer = 0;
+float afterImgBuffer;
 
 static FMapManager fmap_manager = {0};
 
@@ -104,7 +106,7 @@ void playerThink(Entity *self)
 
     if (self->flag != IDLE)
     {
-        if((self->flag != DAMAGED) & (self->flag != BLASTING) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_Y)) &!(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)))
+        if((self->flag != DAMAGED) & (self->flag != BLASTING) & (self->afterImgOn == 0) & !(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_Y)) &!(SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X)) & (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)))
         {
             self->flag = IDLE;
         }
@@ -136,7 +138,7 @@ void playerThink(Entity *self)
     if (self->flag == DAMAGED)
     {
         self->frame = self->frameMapping->hit;
-    }else if (self->flag != CHARGING)
+    }else if (self->flag != CHARGING && !self->afterImgOn)
     {
         if (keys[SDL_SCANCODE_W] || ly < -600)
         {
@@ -177,7 +179,7 @@ void playerThink(Entity *self)
 
     
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X) & (self->flag != DAMAGED))
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_X) & (self->flag != DAMAGED) & !self->afterImgOn)
     {
         self->flag = ATK_LIGHT;
         self->frame += .075;
@@ -194,7 +196,7 @@ void playerThink(Entity *self)
                 if (SDL_GetTicks() - atkBuffer >= 200)
                 {
                     atkBuffer = SDL_GetTicks();
-                    damage_deal(self, self->target);
+                    if(self->target->afterImgOn == 0)damage_deal(self, self->target);
                 }
             }
         }else{
@@ -209,6 +211,42 @@ void playerThink(Entity *self)
         {
             self->flag = BLOCKING;
             self->frame = self->frameMapping->blocking;
+        }
+    }
+
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_LEFTSHOULDER) & (self->ki > 50))
+    {
+        if (self->flag != DAMAGED)
+        {
+            if (SDL_GetTicks() - afterImgBuffer >= 1000)
+            {
+                self->afterImgOn = 1;
+            }
+            
+        }
+    }
+
+    if (self->afterImgOn)
+    {
+        afterImgTimer += 1;
+        self->frame = self->frameMapping->afterImage;
+        if (proj_in_range(self))
+        {
+            afterImgSide(self);
+            self->ki -= 50;
+            self->afterImgOn = 0;
+            afterImgBuffer = SDL_GetTicks();
+        }else if (collide_ent(self, self->target) && self->target->flag == ATK_LIGHT)
+        {
+            afterImgAway(self);
+            self->ki -= 50;
+            self->afterImgOn = 0;
+            afterImgBuffer = SDL_GetTicks();
+        }else if (afterImgTimer >= 100)
+        {
+            self->afterImgOn = 0;
+            afterImgTimer = 0;
+            afterImgBuffer = SDL_GetTicks();
         }
     }
 
@@ -309,6 +347,7 @@ void player_load(Entity *player,  const char *filename, char *character)
     sj_get_float_value(sj_object_get_value(fmapJson, "down"), &fmap->down);
     sj_get_float_value(sj_object_get_value(fmapJson, "up"), &fmap->up);
     sj_get_float_value(sj_object_get_value(fmapJson, "charging"), &fmap->charging);
+    sj_get_float_value(sj_object_get_value(fmapJson, "afterImage"), &fmap->afterImage);
     sj_get_float_value(sj_object_get_value(fmapJson, "endCharging"), &fmap->endCharging);
     sj_get_float_value(sj_object_get_value(fmapJson, "blocking"), &fmap->blocking);
     sj_get_float_value(sj_object_get_value(fmapJson, "endMelee"), &fmap->endMelee);
