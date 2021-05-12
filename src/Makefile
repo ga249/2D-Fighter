@@ -16,7 +16,7 @@ CC      = gcc
 LIB_LIST = ../gfc/libs/libgfc.a ../gfc/simple_json/libs/libsj.a ../gfc/simple_logger/libs/libsl.a 
 OBJECTS = $(patsubst %.c,%.o,$(wildcard *.c))
 
-INC_PATHS = ../include ../gfc/include ../gfc/simple_logger/include ../gfc/simple_json/include
+INC_PATHS = ../include ../gfc/include ../gfc/simple_logger/include ../gfc/simple_json/include /usr/include/SDL2
 INC_PARAMS =$(foreach d, $(INC_PATHS), -I$d)
 
 OBJECTS = $(patsubst %.c,%.o,$(wildcard *.c))

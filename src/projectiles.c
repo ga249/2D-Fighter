@@ -18,7 +18,7 @@ void projectile_think(Entity *self)
                 if(self->ttd > 0)
                 {
                     self->ttd -= .01;
-                    slog("%f", self->ttd);
+                    //slog("%f", self->ttd);
                 }else{
                     self->ttd = 0;
                 }
@@ -155,7 +155,7 @@ void spawn_projectile(Entity *parent, char *type)
             self->position.y -= self->unitDirection->y;
         }
         self->frame = self->parent->frameMapping->superBlast;
-        slog("%f",self->frame);
+        //slog("%f",self->frame);
 
         self->hbType = HB_CIRCLE;
         Circle hc = gf2d_circle(self->position.x,self->position.y, 25);

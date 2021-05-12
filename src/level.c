@@ -1,4 +1,5 @@
 #include "level.h"
+#include "menus.h"
 
 Vector4D v4d_red   = {255, 100, 100, 255};
 Vector4D v4d_green = {100, 255, 100, 255};
@@ -37,7 +38,7 @@ Level *level_new(Sprite *backgroundFile, Entity *p1, Entity *p2)
     return level;
 }
 
-void level_load_into(Level *level, const char *filename)
+void level_load_from(Level *level, const char *filename)
 {
     SJson *json, *LevelJS;
     const char *string;
@@ -171,33 +172,36 @@ void level_update(Level *lvl)
             }
         }
     }
-    if (keys[SDL_SCANCODE_L])
-    {
-        if (SDL_GetTicks() - pauseBuffer >= 200)
-        {
-            pauseBuffer = SDL_GetTicks();
 
-            level_load_into(lvl, "levels/level.json");
-        }
-    }
-    if (keys[SDL_SCANCODE_SPACE])
-    {
-        if (SDL_GetTicks() - pauseBuffer >= 200)
-        {
-            pauseBuffer = SDL_GetTicks();
+    //--------------------------------------------------------debugging-------------------------------------------
 
-            level_save(lvl, "levels/save.json");
-        }
-    }
-    if (keys[SDL_SCANCODE_C])
-    {
-        if (SDL_GetTicks() - pauseBuffer >= 200)
-        {
-            pauseBuffer = SDL_GetTicks();
-
-            level_load_into(lvl, "levels/save.json");
-        }
-    }
+    //if (keys[SDL_SCANCODE_L])
+    //{
+    //    if (SDL_GetTicks() - pauseBuffer >= 200)
+    //    {
+    //        pauseBuffer = SDL_GetTicks();
+//
+    //        level_load_from(lvl, "levels/level.json");
+    //    }
+    //}
+    //if (keys[SDL_SCANCODE_SPACE])
+    //{
+    //    if (SDL_GetTicks() - pauseBuffer >= 200)
+    //    {
+    //        pauseBuffer = SDL_GetTicks();
+//
+    //        level_save(lvl, "levels/save.json");
+    //    }
+    //}
+    //if (keys[SDL_SCANCODE_C])
+    //{
+    //    if (SDL_GetTicks() - pauseBuffer >= 200)
+    //    {
+    //        pauseBuffer = SDL_GetTicks();
+//
+    //        level_load_from(lvl, "levels/save.json");
+    //    }
+    //}
 
     if (keys[SDL_SCANCODE_M])
     {
@@ -214,4 +218,5 @@ void level_update(Level *lvl)
             }
         }
     }
+    //--------------------------------------------------------------------------------------------------------------------------
 }

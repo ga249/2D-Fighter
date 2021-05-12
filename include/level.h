@@ -17,7 +17,7 @@
 #define IN_GAME                2
 #define P1_WIN                 3
 #define P2_WIN                 4
-#define P1_LOSE                5
+#define U_LOSE                5
 
 Vector4D v4d_red;
 Vector4D v4d_green;
@@ -50,7 +50,7 @@ typedef struct
  * */
 Level *level_new(Sprite *backgroundFile, Entity *p1, Entity *p2);
 
-void level_load_into(Level *level, const char *filename);
+void level_load_from(Level *level, const char *filename);
 
 void level_save(Level *level, const char *filename);
 

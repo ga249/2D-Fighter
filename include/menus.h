@@ -12,14 +12,17 @@
 #define IN_GAME                2
 #define P1_WIN                 3
 #define P2_WIN                 4
-#define P1_LOSE                5
+#define U_LOSE                5
+#define PAUSED                 6
+
+float last_level_change;
 
 typedef struct Menu_S
 {
     Uint8       _inuse;             /**<Check if entity in memory is active or not*/
     Sprite      *sprite;            /**<A pointer to the sprite*/
     //int         collider_shape;     /**<Indicates whether collider is cirlular or rectangular*/
-    // float       frame;              /**<Current frame of sripte*/
+    float       frame;              /**<Current frame of sripte*/
     // float       maxFrames;          /**<Maximum number of frames in a sprite*/
     Vector2D    position;           /**<2D position of entity*/
     Vector2D    drawOffset;         /**<Offset of collider*/
@@ -80,6 +83,7 @@ Menu *menu_generic(
     int         group,
     SDL_Rect    box,
     Vector2D    drawOffset,
+    int         buttonFrame,
     Sprite      *sprite,
     void        (*think)(struct Menu_S *self)
 );
@@ -88,6 +92,7 @@ void menu_genericV(
     int         group,
     SDL_Rect    box,
     Vector2D    drawOffset,
+    int         buttonFrame,
     Sprite      *sprite,
     void        (*think)(struct Menu_S *self)
 );
@@ -96,7 +101,14 @@ void createMenus();
 
 void quitThink(Menu *self);
 
+void challengeThink(Menu *self);
+
 void remoteThink(Menu *self);
+
+void rematchThink(Menu *self);
+
+void mainMThink(Menu *self);
+
 
 
 #endif

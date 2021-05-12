@@ -1,13 +1,14 @@
 #include <SDL.h>
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
-#include "gfc_audio.h"
 #include "simple_logger.h"
 #include "entity.h"
 #include "player.h"
 #include "level.h"
 #include "damage.h"
 #include "menus.h"
+#include "gfc_audio.h"
+#include "sounds.h"
 
 void draw_ui(SDL_Rect p1Health,SDL_Rect p2Health,SDL_Rect p1Ki,SDL_Rect p2Ki)
 {
@@ -17,6 +18,11 @@ void draw_ui(SDL_Rect p1Health,SDL_Rect p2Health,SDL_Rect p1Ki,SDL_Rect p2Ki)
     gf2d_draw_rect(p2Ki, v4d_blue);
 }
 
+//void sound_set_backround(Sound *sound)
+//{
+//    //Mix_HaltChannel(1);
+//    gfc_sound_play(sound, -1, .1, 1, -1);
+//}
 
 int main(int argc, char * argv[])
 {
@@ -33,6 +39,7 @@ int main(int argc, char * argv[])
     SDL_Rect p2Health;
     SDL_Rect p1Ki;
     SDL_Rect p2Ki;
+    //Sound *chaLa;  //--------------------------------------sounds
 
     int mx,my;
     float mf = 0;
@@ -55,7 +62,7 @@ int main(int argc, char * argv[])
     entity_manager_init(1084);
     gf2d_sprite_init(1024);
     menu_manager_init(1024);
-    //gfc_audio_init(1020);
+    //sounds_init();    //--------------------------------------sounds
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
@@ -74,6 +81,7 @@ int main(int argc, char * argv[])
     gfc_rect_set(p2Ki, lvl->bounds.w - 510, 35, 500, 20);
     
     createMenus();
+    //play_menu_music();   //--------------------------------------sounds
 
     /*main game loop*/
     while(!lvl->done)
@@ -104,34 +112,25 @@ int main(int argc, char * argv[])
             if (!lvl->paused)
             {
                 entity_update_all();
+            }else{
+                menu_update_group(PAUSED);
             }
             break;
 
         case MAIN_MENU:
             menu_update_group(MAIN_MENU);
             break;
+        case P1_WIN:
+            menu_update_group(PAUSED);
+            break;
+        case P2_WIN:
+            menu_update_group(PAUSED);
+            break;
+        case U_LOSE:
+            menu_update_group(U_LOSE);
+            break;
         }
 
-        //DAMANGE_COLLISION_CHECK--------------------------------------------------
-        //if (collide_ent(player1,player2))
-        //{
-        //    if ((player1->flag == ATK_LIGHT) || (player1->flag == ATK_HEAVY))
-        //    {
-        //        if (SDL_GetTicks() - atkBuffer >= 200)
-        //        {
-        //            atkBuffer = SDL_GetTicks();
-        //            damage_deal(player1,player2);
-        //        }
-        //    }else
-        //    if ((player2->flag == ATK_LIGHT) || (player2->flag == ATK_HEAVY))
-        //    {
-        //        if (SDL_GetTicks() - atkBuffer >= 200)
-        //        {
-        //            atkBuffer = SDL_GetTicks();
-        //            damage_deal(player2,player1);
-        //        }
-        //    }
-        //}
         if (SDL_GetTicks() - idleResetBuffer >= 300)
         {
             idleResetBuffer = SDL_GetTicks();
@@ -152,15 +151,32 @@ int main(int argc, char * argv[])
                 if (!lvl->paused)
                 {
                     entity_draw_all();
-                }
+                    if(toggleHb)entity_draw_all_hitboxes();
+                }else{
+                    menu_draw_group(PAUSED);
+                    gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                    }
                 break;
 
             case MAIN_MENU:
                 menu_draw_group(MAIN_MENU);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                break;
+            case P1_WIN:
+                menu_draw_group(PAUSED);
+                menu_draw_group(P1_WIN);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                break;
+            case P2_WIN:
+                menu_draw_group(PAUSED);
+                menu_draw_group(P2_WIN);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                break;
+            case U_LOSE:
+                menu_draw_group(U_LOSE);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
                 break;
             }
-            
-            if(toggleHb)entity_draw_all_hitboxes();
             
             //UI elements last
             if (!lvl->paused && lvl->screen == IN_GAME)
@@ -168,15 +184,7 @@ int main(int argc, char * argv[])
                 draw_ui(p1Health,p2Health,p1Ki,p2Ki);
             }
 
-            gf2d_sprite_draw(
-                mouse,
-                vector2d(mx,my),
-                NULL,
-                NULL,
-                NULL,
-                NULL,
-                &mouseColor,
-                (int)mf);
+            
 
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
 
@@ -186,20 +194,24 @@ int main(int argc, char * argv[])
         {
             if(!lvl->isLocalCoop)
             {
-                lvl->screen = P1_LOSE;
+                lvl->screen = U_LOSE;
+                lvl->paused = 1;
             }else if (lvl->isLocalCoop)
             {
                 lvl->screen = P2_WIN;
+                lvl->paused = 1;
             }
         }else if (player2->health <= 0)
         {
             if(!lvl->isLocalCoop)
             {
                 lvl->screen = P1_WIN;
+                lvl->paused = 1;
                 //TODO: make it move on to next challenger
             }else if (lvl->isLocalCoop)
             {
                 lvl->screen = P1_WIN;
+                lvl->paused = 1;
             }
         }
         
@@ -221,8 +233,14 @@ int main(int argc, char * argv[])
             
         }
 
+        if (keys[SDL_SCANCODE_V])
+        {
+            player1->health -= .5;
+        }
+
         //slog("rotation: %f", rot->z);
-        if (keys[SDL_SCANCODE_ESCAPE] || SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))lvl->done = 1; // exit condition
+        if (keys[SDL_SCANCODE_ESCAPE])lvl->done = 1; // exit condition
+        if (SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))lvl->paused = 1;
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");

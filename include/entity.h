@@ -9,7 +9,7 @@
 
 
 #define ENT_PLAYER      0
-#define ENT_SELECT      1
+#define ENT_AI          1
 
 #define ATK_LIGHT       1
 #define ATK_HEAVY       2
@@ -34,8 +34,8 @@ typedef struct Entity_S
     SJson       *attackFrames;
     int         attackDist;
     Vector2D    *offset;        /**<offset of sprite draw>*/
-    int         mainY;
-    int         altY;
+    int         mainY;          /**<main y offset for characters that have altY's for when they're flipped>*/
+    int         altY;           /**<alternate y offset for characters that need it>*/
     Vector2D    *scale;         /**<scaleOffset of sprite draw>*/
     Vector2D    *flip;          /**<(flip Horiz,flip Vert)>*/
     int         speed;          /**<Speed at which ent moves>*/
@@ -44,6 +44,9 @@ typedef struct Entity_S
     int         hbType;         /**<defines whether to use rect or circle hb>*/
     SDL_Rect    hitBox;         /**<rect used for collisions>*/
     Circle      hitCircle;      /**<circle used for collisions>*/
+    Circle      aiDistLarge;    
+    Circle      aiDistMid;
+    Circle      aiDistClose;
     float       hbWidth;
     int         tag;            /**<type of entity:player - 0>*/
     int         flag;           /**<flag used for if players are attacking to trigger damage>*/
@@ -118,9 +121,7 @@ void entity_draw_all();
  */
 void entity_draw_all_hitboxes();
 
-//void ent_move_vert(Entity *e, int i);
-//
-//void ent_move_horiz(Entity *e, int i);
+int proj_in_range(Entity *self);
 
 /**
  * @brief Make 2 entities face each other

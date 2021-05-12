@@ -30,6 +30,15 @@ int collide_menu(SDL_Rect r1, Vector2D m){
     return 1;
 }
 
+int collide_ent_circle(Entity *e1, Circle c)
+{
+    if (collide_circle(vector2d(e1->hitCircle.x,e1->hitCircle.y),e1->hitCircle.r,vector2d(c.x,c.y),c.r))
+    {
+        return 1;
+    }
+    return 0;
+}
+
 int collide_ent(Entity *e1, Entity *e2)
 {
     if ((e1->hbType == HB_RECT) & (e2->hbType == HB_RECT))

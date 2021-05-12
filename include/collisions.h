@@ -25,6 +25,8 @@ int collide_rect(SDL_Rect r1,SDL_Rect r2);
 
 int collide_menu(SDL_Rect r1, Vector2D m);
 
+int collide_ent_circle(Entity *e1, Circle c);
+
 int collide_ent(Entity *e1, Entity *e2);
 
 /**

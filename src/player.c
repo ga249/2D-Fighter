@@ -5,6 +5,7 @@
 #include "gf2d_draw.h"
 #include "level.h"
 #include "damage.h"
+#include "combat_actions.h"
 
 const Uint8 * keys;
 float p1projBuffer;
@@ -62,7 +63,7 @@ void fmap_manager_init(Uint32 maxMaps)
     fmap_manager.fmapList = malloc(sizeof(FrameMapping) * maxMaps);
     if (fmap_manager.fmapList == NULL)
     {
-        slog("failed to allocate %i fmaps for the fmap manager", maxMaps);
+        slog("failed to allocate %i fmaps for the fmap manager", (int)maxMaps);
         return;
     }
     fmap_manager.maxMaps = maxMaps;
@@ -94,6 +95,12 @@ void playerThink(Entity *self)
 
     self->hitCircle.x = self->position.x;// + 10;
     self->hitCircle.y = self->position.y;// + 35;
+    self->aiDistLarge.x = self->position.x;
+    self->aiDistLarge.y = self->position.y;
+    self->aiDistMid.x = self->position.x;
+    self->aiDistMid.y = self->position.y;
+    self->aiDistClose.x = self->position.x;
+    self->aiDistClose.y = self->position.y;
 
     if (self->flag != IDLE)
     {
@@ -129,7 +136,7 @@ void playerThink(Entity *self)
     if (self->flag == DAMAGED)
     {
         self->frame = self->frameMapping->hit;
-    }else
+    }else if (self->flag != CHARGING)
     {
         if (keys[SDL_SCANCODE_W] || ly < -600)
         {
@@ -196,7 +203,7 @@ void playerThink(Entity *self)
 
     }
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)||keys[SDL_SCANCODE_J])
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) & (self->flag != DAMAGED))
     {
         if (self->flag != DAMAGED)
         {
@@ -212,7 +219,7 @@ void playerThink(Entity *self)
         if (self->ki < 350)self->ki += 1;
     }
 
-    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_B))
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_B) & (self->flag != CHARGING))
     {
         if (self->ki > 0)
         {
@@ -234,11 +241,19 @@ void playerThink(Entity *self)
             {
                 p1superBuffer = SDL_GetTicks();
                 spawn_projectile(self, "superBlast");
-            }
-            
-            
+            } 
         }
     }
+
+    //if (keys[SDL_SCANCODE_V])
+    //{
+        //get_closer(self);
+    //}
+//
+    //if (keys[SDL_SCANCODE_COMMA])
+    //{
+    //    retreat(self);
+    //}
 
 }
 
@@ -311,7 +326,7 @@ void player_load(Entity *player,  const char *filename, char *character)
 
     slog("Character loaded");
 
-    //sj_free(atkFramesJson);
+    sj_free(atkFramesJson);
     sj_free(fmapJson);
     sj_free(characterJson);
     sj_free(json);
@@ -338,7 +353,15 @@ Entity *spawnPlayer(Vector2D initPos, int isPlayer2, char *character)
 
     self->hbType = HB_CIRCLE;
     Circle hc = gf2d_circle(self->position.x ,self->position.y , 30);
+    Circle aiDistLarge = gf2d_circle(self->position.x ,self->position.y , 400);
+    Circle aiDistMid = gf2d_circle(self->position.x ,self->position.y , 200);
+    Circle aiDistClose = gf2d_circle(self->position.x ,self->position.y , 75);
     self->hitCircle = hc;
+    self->aiDistLarge = aiDistLarge;
+    self->aiDistMid = aiDistMid;
+    self->aiDistClose = aiDistClose;
+
+
     self->think = playerThink;
 
     if (isPlayer2)
