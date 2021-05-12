@@ -12,8 +12,9 @@
 #define IN_GAME                2
 #define P1_WIN                 3
 #define P2_WIN                 4
-#define U_LOSE                5
+#define U_LOSE                 5
 #define PAUSED                 6
+#define U_WIN                  7
 
 float last_level_change;
 
@@ -100,6 +101,8 @@ void menu_genericV(
 void createMenus();
 
 void quitThink(Menu *self);
+
+void nextThink(Menu *self);
 
 void challengeThink(Menu *self);
 

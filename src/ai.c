@@ -249,7 +249,7 @@ void ai_think(Entity *self)
 //----------------------------------------DEBUGGING--------------------------
     if (keys[SDL_SCANCODE_SPACE])
     {
-        self->ki -= 1;
+        self->health -= 3;
     }
 
 }

@@ -21,6 +21,7 @@
 #define T_P1_WINS       8
 #define T_P2_WINS       9
 #define T_U_LOSE        10
+#define T_U_WIN         11
 
 typedef struct 
 {
@@ -183,7 +184,7 @@ void menu_genericV(
 void createMenus()
 {
     //Menu *quit, *remoteVs, *challenge;
-    SDL_Rect quitBox, remoteBox, challBox, rematchBox, mainMBox, p1winBox, p2winBox, uLoseBox;
+    SDL_Rect quitBox, remoteBox, challBox, rematchBox, mainMBox, p1winBox, p2winBox, uWLBox, nextBox;
     Level *lvl = level_get_active();
     Sprite  *menus;
     menus = gf2d_sprite_load_all("images/menus/menuButtons.png", 391, 56, 1);
@@ -208,9 +209,15 @@ void createMenus()
     gfc_rect_set(p2winBox, 475, 200, 0, 0);
     menu_genericV(P2_WIN,p2winBox,blank,T_P2_WINS,menus,NULL);
     //------------------------------------------U_LOSE------------------------
-    gfc_rect_set(uLoseBox, 475, 200, 0, 0);
-    menu_genericV(U_LOSE,uLoseBox,blank,T_U_LOSE,menus,NULL);
+    gfc_rect_set(uWLBox, 500, 200, 0, 0);
+    menu_genericV(U_LOSE,uWLBox,blank,T_U_LOSE,menus,NULL);
     menu_genericV(U_LOSE,mainMBox,blank,B_MAIN_MENU,menus,mainMThink);
+    //------------------------------------------U_WIN-------------------------
+    gfc_rect_set(uWLBox, 500, 200, 0, 0);
+    gfc_rect_set(nextBox, 400, 323, 390, 56);
+    menu_genericV(U_WIN,uWLBox,blank,T_U_WIN,menus,NULL);
+    menu_genericV(U_WIN,nextBox,blank,B_NEXTBAT,menus,nextThink);
+    menu_genericV(U_WIN,mainMBox,blank,B_MAIN_MENU,menus,mainMThink);
 }
 
 void quitThink(Menu *self)
@@ -224,6 +231,30 @@ void quitThink(Menu *self)
         {
             last_level_change = SDL_GetTicks();
             level_get_active()->done = 1;
+        }
+    }
+}
+
+void nextThink(Menu *self)
+{
+    //if(level_get_active()->paused)
+    //{
+    //    last_level_change = SDL_GetTicks();
+    //    level_get_active()->paused = 0;
+    //}
+    int mx,my;
+    SDL_GetMouseState(&mx,&my);
+    if (collide_menu(self->box, vector2d(mx,my)))
+    {
+        if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && (SDL_GetTicks() - last_level_change >= 200))
+        {
+            last_level_change = SDL_GetTicks();
+            level_get_active()->winCount += 1;
+            level_get_active()->screen = IN_GAME;
+            level_get_active()->isLocalCoop = 0;
+            level_get_active()->paused = 0;
+            //level_get_active()->p2->think = ai_think;
+            level_load_from(level_get_active(), "levels/level.json");
         }
     }
 }
@@ -242,6 +273,7 @@ void challengeThink(Menu *self)
         if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && (SDL_GetTicks() - last_level_change >= 200))
         {
             last_level_change = SDL_GetTicks();
+            level_get_active()->winCount = 0;
             level_get_active()->screen = IN_GAME;
             level_get_active()->isLocalCoop = 0;
             level_get_active()->paused = 0;

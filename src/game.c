@@ -30,6 +30,7 @@ int main(int argc, char * argv[])
     float atkBuffer;
     float idleResetBuffer;
     int toggleHb = 0;
+    int toggleM = 0;
     const Uint8 * keys;
     Sprite *bg;
     Entity *player1;
@@ -92,7 +93,7 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
-        //slog("%i, %i", mx, my);
+        if(toggleM)slog("%i, %i", mx, my);
 
         p1Health.w = player1->health;
         p2Health.w = player2->health;
@@ -128,6 +129,9 @@ int main(int argc, char * argv[])
             break;
         case U_LOSE:
             menu_update_group(U_LOSE);
+            break;
+        case U_WIN:
+            menu_update_group(U_WIN);
             break;
         }
 
@@ -176,8 +180,12 @@ int main(int argc, char * argv[])
                 menu_draw_group(U_LOSE);
                 gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
                 break;
+            case U_WIN:
+                menu_draw_group(U_WIN);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                break;
             }
-            
+
             //UI elements last
             if (!lvl->paused && lvl->screen == IN_GAME)
             {
@@ -205,9 +213,8 @@ int main(int argc, char * argv[])
         {
             if(!lvl->isLocalCoop)
             {
-                lvl->screen = P1_WIN;
+                lvl->screen = U_WIN;
                 lvl->paused = 1;
-                //TODO: make it move on to next challenger
             }else if (lvl->isLocalCoop)
             {
                 lvl->screen = P1_WIN;
@@ -233,6 +240,26 @@ int main(int argc, char * argv[])
             
         }
 
+        if (keys[SDL_SCANCODE_PERIOD])
+        {
+            if (SDL_GetTicks() - atkBuffer >= 200)
+            {
+                atkBuffer = SDL_GetTicks();
+                if (toggleM)toggleM = 0;else toggleM = 1;
+            }
+            
+        }
+
+        if (keys[SDL_SCANCODE_TAB])
+        {
+            if (SDL_GetTicks() - atkBuffer >= 200)
+            {
+                atkBuffer = SDL_GetTicks();
+                slog("%i", lvl->screen);
+            }
+            
+        }
+
         if (keys[SDL_SCANCODE_V])
         {
             player1->health -= .5;
@@ -240,7 +267,11 @@ int main(int argc, char * argv[])
 
         //slog("rotation: %f", rot->z);
         if (keys[SDL_SCANCODE_ESCAPE])lvl->done = 1; // exit condition
-        if (SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))lvl->paused = 1;
+        if (SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))
+        {
+            if(lvl->paused == 0)lvl->paused = 1;else lvl->paused = 0;
+        }
+        
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");

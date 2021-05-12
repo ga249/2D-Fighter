@@ -34,6 +34,7 @@ typedef struct
     int         done;           /**<Done condition>*/
     int         paused;
     int         screen;
+    int         winCount;
     Entity      *p1;
     Entity      *p2;
     SJson       *config;
