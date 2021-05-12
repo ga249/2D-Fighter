@@ -18,7 +18,9 @@ typedef struct FrameMapping_S
     float     right;
     float     left;
     float     down;      
-    float     up;       
+    float     up;     
+    float     forwardDash;
+    float     backDash;  
     float     charging;
     float     afterImage;    
     float     endCharging;

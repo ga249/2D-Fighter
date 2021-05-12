@@ -129,6 +129,7 @@ void playerThink(Entity *self)
         {
             speed = SPEED_DASH;
             self->ki -= 2;
+
         }
     }
     //---------------------------------
@@ -156,9 +157,9 @@ void playerThink(Entity *self)
 
             if (self->flip->y)
             {
-                self->frame = self->frameMapping->left;
+                if (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))self->frame = self->frameMapping->left;else{self->frame = self->frameMapping->backDash;}
             }else{
-                self->frame = self->frameMapping->right;
+                if (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))self->frame = self->frameMapping->right;else{self->frame = self->frameMapping->forwardDash;}
             }
 
         }
@@ -168,9 +169,9 @@ void playerThink(Entity *self)
 
             if (self->flip->y)
             {
-                self->frame = self->frameMapping->right;
+                if (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))self->frame = self->frameMapping->right;else{self->frame = self->frameMapping->forwardDash;}
             }else{
-                self->frame = self->frameMapping->left;
+                if (!SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))self->frame = self->frameMapping->left;else{self->frame = self->frameMapping->backDash;}
             }
         }
     }
@@ -346,6 +347,8 @@ void player_load(Entity *player,  const char *filename, char *character)
     sj_get_float_value(sj_object_get_value(fmapJson, "left"), &fmap->left);
     sj_get_float_value(sj_object_get_value(fmapJson, "down"), &fmap->down);
     sj_get_float_value(sj_object_get_value(fmapJson, "up"), &fmap->up);
+    sj_get_float_value(sj_object_get_value(fmapJson, "forwardDash"), &fmap->forwardDash);
+    sj_get_float_value(sj_object_get_value(fmapJson, "backDash"), &fmap->backDash);
     sj_get_float_value(sj_object_get_value(fmapJson, "charging"), &fmap->charging);
     sj_get_float_value(sj_object_get_value(fmapJson, "afterImage"), &fmap->afterImage);
     sj_get_float_value(sj_object_get_value(fmapJson, "endCharging"), &fmap->endCharging);

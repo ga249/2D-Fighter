@@ -41,7 +41,7 @@ int main(int argc, char * argv[])
     SDL_Rect p2Health;
     SDL_Rect p1Ki;
     SDL_Rect p2Ki;
-    //Sound *chaLa;  //--------------------------------------sounds
+    Sound *chaLa;  //--------------------------------------sounds
 
     int mx,my;
     float mf = 0;
@@ -64,13 +64,13 @@ int main(int argc, char * argv[])
     entity_manager_init(1084);
     gf2d_sprite_init(1024);
     menu_manager_init(1024);
-    //sounds_init();    //--------------------------------------sounds
+    sounds_init();    //--------------------------------------sounds
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
     bg = gf2d_sprite_load_image("images/backgrounds/namek.png");
     mouse = gf2d_sprite_load_image("images/mouse.png");
-    //mouse->actionSpec = vector3d(0,0,16);
+    mouse->actionSpec = vector3d(0,0,16);
     player1 = spawnPlayer(vector2d(360,300), 0, "piccolo");
     player2 = spawnPlayer(vector2d(840,300), 1, "goku");
     lvl = level_new(bg, player1, player2);
@@ -83,7 +83,7 @@ int main(int argc, char * argv[])
     gfc_rect_set(p2Ki, lvl->bounds.w - 510, 35, 500, 20);
     
     createMenus();
-    //play_menu_music();   //--------------------------------------sounds
+    play_menu_music();   //--------------------------------------sounds
 
     /*main game loop*/
     while(!lvl->done)
@@ -247,6 +247,9 @@ int main(int argc, char * argv[])
         }else if (keys[SDL_SCANCODE_F6])
         {
             player_load(player1, "characters/characters.json", "goku");
+        }else if (keys[SDL_SCANCODE_F7])
+        {
+            player_load(player1, "characters/characters.json", "vegeta");
         }
 
         if (keys[SDL_SCANCODE_B])
