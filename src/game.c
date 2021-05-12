@@ -28,6 +28,7 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     float atkBuffer;
+    float pauseBuffer;
     float idleResetBuffer;
     int toggleHb = 0;
     int toggleM = 0;
@@ -45,7 +46,7 @@ int main(int argc, char * argv[])
     int mx,my;
     float mf = 0;
     Sprite *mouse;
-    Vector4D mouseColor = {255,100,255,200};
+    //Vector4D mouseColor = {255,100,255,200};
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -68,8 +69,8 @@ int main(int argc, char * argv[])
     
     /*demo setup*/
     bg = gf2d_sprite_load_image("images/backgrounds/namek.png");
-    mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
-    mouse->actionSpec = vector3d(0,0,16);
+    mouse = gf2d_sprite_load_image("images/mouse.png");
+    //mouse->actionSpec = vector3d(0,0,16);
     player1 = spawnPlayer(vector2d(360,300), 0, "piccolo");
     player2 = spawnPlayer(vector2d(840,300), 1, "goku");
     lvl = level_new(bg, player1, player2);
@@ -91,8 +92,9 @@ int main(int argc, char * argv[])
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
         SDL_GetMouseState(&mx,&my);
-        mf+=0.1;
-        if (mf >= 16.0)mf = 0;
+        //mf+=0.1;
+        //if (mf >= 16.0)mf = 0;
+        mf = 0;
         if(toggleM)slog("%i, %i", mx, my);
 
         p1Health.w = player1->health;
@@ -133,6 +135,9 @@ int main(int argc, char * argv[])
         case U_WIN:
             menu_update_group(U_WIN);
             break;
+        case COMPLETE:
+            menu_update_group(COMPLETE);
+            break;
         }
 
         if (SDL_GetTicks() - idleResetBuffer >= 300)
@@ -158,31 +163,35 @@ int main(int argc, char * argv[])
                     if(toggleHb)entity_draw_all_hitboxes();
                 }else{
                     menu_draw_group(PAUSED);
-                    gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                    gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,NULL,(int)mf);
                     }
                 break;
 
             case MAIN_MENU:
                 menu_draw_group(MAIN_MENU);
-                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,NULL,(int)mf);
                 break;
             case P1_WIN:
                 menu_draw_group(PAUSED);
                 menu_draw_group(P1_WIN);
-                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,NULL,(int)mf);
                 break;
             case P2_WIN:
                 menu_draw_group(PAUSED);
                 menu_draw_group(P2_WIN);
-                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,NULL,(int)mf);
                 break;
             case U_LOSE:
                 menu_draw_group(U_LOSE);
-                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,NULL,(int)mf);
                 break;
             case U_WIN:
                 menu_draw_group(U_WIN);
-                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,&mouseColor,(int)mf);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,NULL,(int)mf);
+                break;
+            case COMPLETE:
+                menu_draw_group(COMPLETE);
+                gf2d_sprite_draw(mouse,vector2d(mx,my),NULL,NULL,NULL,NULL,NULL,(int)mf);
                 break;
             }
 
@@ -213,8 +222,15 @@ int main(int argc, char * argv[])
         {
             if(!lvl->isLocalCoop)
             {
-                lvl->screen = U_WIN;
-                lvl->paused = 1;
+                if(lvl->winCount == 2)
+                {
+                    lvl->screen = COMPLETE;
+                    lvl->paused = 1;
+                }else{
+                    lvl->screen = U_WIN;
+                    lvl->paused = 1;
+                }
+                
             }else if (lvl->isLocalCoop)
             {
                 lvl->screen = P1_WIN;
@@ -224,10 +240,13 @@ int main(int argc, char * argv[])
         
         if (keys[SDL_SCANCODE_F4])
         {
-            player_load(player1, "characters/characters.json", "goku");
+            player_load(player1, "characters/characters.json", "buu");
         }else if (keys[SDL_SCANCODE_F5])
         {
             player_load(player1, "characters/characters.json", "piccolo");
+        }else if (keys[SDL_SCANCODE_F6])
+        {
+            player_load(player1, "characters/characters.json", "goku");
         }
 
         if (keys[SDL_SCANCODE_B])
@@ -269,10 +288,15 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])lvl->done = 1; // exit condition
         if (SDL_GameControllerGetButton(player1->controller,SDL_CONTROLLER_BUTTON_START) || SDL_GameControllerGetButton(player2->controller,SDL_CONTROLLER_BUTTON_START))
         {
-            if(lvl->paused == 0)lvl->paused = 1;else lvl->paused = 0;
+            if (SDL_GetTicks() - pauseBuffer >= 200)
+            {
+                pauseBuffer = SDL_GetTicks();
+                if(lvl->paused == 0)lvl->paused = 1;else lvl->paused = 0;
+            }
+            
         }
         
-        //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
+        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
     level_free(lvl);

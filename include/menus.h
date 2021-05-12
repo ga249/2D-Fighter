@@ -15,6 +15,7 @@
 #define U_LOSE                 5
 #define PAUSED                 6
 #define U_WIN                  7
+#define COMPLETE               8
 
 float last_level_change;
 

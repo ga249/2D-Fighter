@@ -218,6 +218,10 @@ void createMenus()
     menu_genericV(U_WIN,uWLBox,blank,T_U_WIN,menus,NULL);
     menu_genericV(U_WIN,nextBox,blank,B_NEXTBAT,menus,nextThink);
     menu_genericV(U_WIN,mainMBox,blank,B_MAIN_MENU,menus,mainMThink);
+    //------------------------------------------COMPLETE-------------------------
+    gfc_rect_set(uWLBox, 500, 200, 0, 0);
+    menu_genericV(COMPLETE,uWLBox,blank,T_U_WIN,menus,NULL);
+    menu_genericV(COMPLETE,mainMBox,blank,B_MAIN_MENU,menus,mainMThink);
 }
 
 void quitThink(Menu *self)
@@ -248,7 +252,21 @@ void nextThink(Menu *self)
     {
         if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && (SDL_GetTicks() - last_level_change >= 200))
         {
+            int num = rand() % 3;
+            switch (num)
+            {
+            case 0:
+                player_load(level_get_active()->p2, "characters/characters.json", "buu");
+                break;
+            case 1:
+                player_load(level_get_active()->p2, "characters/characters.json", "goku");
+                break;
+            case 2:
+                player_load(level_get_active()->p2, "characters/characters.json", "piccolo");
+                break;
+            }
             last_level_change = SDL_GetTicks();
+            free_all_ents();
             level_get_active()->winCount += 1;
             level_get_active()->screen = IN_GAME;
             level_get_active()->isLocalCoop = 0;
@@ -272,7 +290,21 @@ void challengeThink(Menu *self)
     {
         if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && (SDL_GetTicks() - last_level_change >= 200))
         {
+            int num = rand() % 3;
+            switch (num)
+            {
+            case 0:
+                player_load(level_get_active()->p2, "characters/characters.json", "buu");
+                break;
+            case 1:
+                player_load(level_get_active()->p2, "characters/characters.json", "goku");
+                break;
+            case 2:
+                player_load(level_get_active()->p2, "characters/characters.json", "piccolo");
+                break;
+            }
             last_level_change = SDL_GetTicks();
+            free_all_ents();
             level_get_active()->winCount = 0;
             level_get_active()->screen = IN_GAME;
             level_get_active()->isLocalCoop = 0;
@@ -297,6 +329,7 @@ void remoteThink(Menu *self)
         if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && (SDL_GetTicks() - last_level_change >= 200))
         {
             last_level_change = SDL_GetTicks();
+            free_all_ents();
             level_get_active()->screen = IN_GAME;
             level_get_active()->isLocalCoop = 1;
             level_get_active()->paused = 0;
@@ -316,6 +349,7 @@ void rematchThink(Menu *self)
         if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && (SDL_GetTicks() - last_level_change >= 200))
         {
             last_level_change = SDL_GetTicks();
+            free_all_ents();
             level_get_active()->screen = IN_GAME;
             level_get_active()->isLocalCoop = 1;
             level_get_active()->paused = 0;

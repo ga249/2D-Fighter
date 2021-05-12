@@ -70,6 +70,42 @@
             "superBlast":   6,
             "endSuperBlast":14
         }
+    },
+    "buu":
+    {
+        "sprite": "images/buu.png",
+        "sWidth":           111,
+        "sHeight":          111,
+        "offsetX":          45,
+        "offsetY":          45,
+        "altY":             60,
+        "FPL":              5,
+        "superBlastSpeed":  2.25,
+        "hbWidth":          30,
+        "attackFrames":     [9,11,13,15],
+        "attackDist":       40,
+        "frameMappings":    
+        {   
+            "idle":         0,
+            "right":        1,
+            "left":         2,
+            "down":         3,
+            "up":           4,
+            "charging":     7,
+            "afterImage":   6,
+            "endCharging":  7,
+            "blocking":     19,
+            "melee":        8,
+            "endMelee":     16,
+            "kiblast":      17,
+            "super_key":        17,
+            "end_Super":     17,
+            "hit":          20,
+            "death":        20,
+            "thrown":       20,
+            "superBlast":   0,
+            "endSuperBlast":6
+        }
     }
     
 }
