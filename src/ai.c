@@ -9,6 +9,7 @@ const Uint8 * keys;
 float thinkBuffer;
 float doBuffer;
 float blockBuffer;
+int   ranThinkBuffer;
 int   choice;
 int   choiceDefence;
 int   choiceProj;
@@ -114,6 +115,7 @@ void ai_think(Entity *self)
     }
 
 //---------------------------------------------------------------------------Think pause and hold cycle----------------
+    //ranThinkBuffer = gfc_random()
     if (SDL_GetTicks() - thinkBuffer >= 400)
     {
         if (SDL_GetTicks() - doBuffer >= 500)

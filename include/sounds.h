@@ -11,10 +11,19 @@ typedef struct Sounds_S
     Sound *hit;
     Sound *kiblast;
     Sound *superBlast;
+    Sound *teleport;
+    Sound *dash;
+    Sound *charge;
 }Sounds;
 
 void sounds_init();
 
 void play_menu_music();
+
+void play_teleport();
+
+void play_dash();
+
+void play_charge();
 
 #endif

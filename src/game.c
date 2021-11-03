@@ -41,7 +41,6 @@ int main(int argc, char * argv[])
     SDL_Rect p2Health;
     SDL_Rect p1Ki;
     SDL_Rect p2Ki;
-    Sound *chaLa;  //--------------------------------------sounds
 
     int mx,my;
     float mf = 0;
@@ -60,7 +59,7 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
-    fmap_manager_init(100);
+    fmap_manager_init(1084);
     entity_manager_init(1084);
     gf2d_sprite_init(1024);
     menu_manager_init(1024);
@@ -299,7 +298,7 @@ int main(int argc, char * argv[])
             
         }
         
-        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
+        //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
     level_free(lvl);

@@ -13,6 +13,10 @@ float p1superBuffer;
 float atkBuffer; 
 float afterImgTimer = 0;
 float afterImgBuffer;
+int p1DashPlay = 0;
+int p1ChargePlay = 0;
+int p2DashPlay = 0;
+int p2ChargePlay = 0;
 
 static FMapManager fmap_manager = {0};
 
@@ -125,11 +129,42 @@ void playerThink(Entity *self)
     //Set dash speed if X is pressed
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_A))
     {
+        switch (self->p)
+        {
+        case 1:
+            if (p1DashPlay == 0)
+            {
+                play_dash();
+                p1DashPlay = 1;
+            }
+            break;
+        
+        case 2:
+            if (p2DashPlay == 0)
+            {
+                play_dash();
+                p2DashPlay = 1;
+            }
+            break;
+        }
+        
         if (self->ki > 2)
         {
             speed = SPEED_DASH;
             self->ki -= 2;
 
+        }
+    }else
+    {
+        switch (self->p)
+        {
+        case 1:
+            p1DashPlay = 0;
+            break;
+        
+        case 2:
+            p2DashPlay = 0;
+            break;
         }
     }
     //---------------------------------
@@ -234,12 +269,14 @@ void playerThink(Entity *self)
         if (proj_in_range(self))
         {
             afterImgSide(self);
+            play_teleport();
             self->ki -= 50;
             self->afterImgOn = 0;
             afterImgBuffer = SDL_GetTicks();
         }else if (collide_ent(self, self->target) && self->target->flag == ATK_LIGHT)
         {
             afterImgAway(self);
+            play_teleport();
             self->ki -= 50;
             self->afterImgOn = 0;
             afterImgBuffer = SDL_GetTicks();
@@ -253,10 +290,74 @@ void playerThink(Entity *self)
 
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_DPAD_DOWN) & (self->flag != DAMAGED))
     {
+        switch (self->p)
+        {
+        case 1:
+            if (p1ChargePlay <= 0)
+            {
+                play_charge();
+                p1ChargePlay = 200;
+            }
+            break;
+        
+        case 2:
+            if (p2ChargePlay <= 0)
+            {
+                play_charge();
+                p2ChargePlay = 200;
+            }
+            break;
+        }
+        if (p1ChargePlay > 0)p1ChargePlay -= 1;
+        if (p2ChargePlay > 0)p2ChargePlay -= 1;
+
         self->flag = CHARGING;
         self->frame = self->frameMapping->endCharging;
         if (self->ki < 350)self->ki += 1;
+    }else{
+        if (p1ChargePlay > 0)p1ChargePlay = 0;
+        if (p2ChargePlay > 0)p2ChargePlay = 0;
     }
+
+    /*
+    if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_DPAD_DOWN) & (self->flag != DAMAGED))
+    {
+        switch (self->p)
+        {
+        case 1:
+            if (p1ChargePlay == 0)
+            {
+                play_charge();
+                p1ChargePlay = 1;
+            }
+            break;
+        
+        case 2:
+            if (p2ChargePlay == 0)
+            {
+                play_charge();
+                p2ChargePlay = 1;
+            }
+            break;
+        }
+        
+        self->flag = CHARGING;
+        self->frame = self->frameMapping->endCharging;
+        if (self->ki < 350)self->ki += 1;
+    }else
+    {
+        switch (self->p)
+        {
+        case 1:
+            p1ChargePlay = 0;
+            break;
+        
+        case 2:
+            p2ChargePlay = 0;
+            break;
+        }
+    }
+    */
 
     if (SDL_GameControllerGetButton(c, SDL_CONTROLLER_BUTTON_B) & (self->flag != CHARGING))
     {

@@ -7,6 +7,7 @@
 #include "gf2d_draw.h"
 #include "entity.h"
 #include "projectiles.h"
+#include "sounds.h"
 
 #define SPEED_BASE      2
 #define SPEED_DASH      4
